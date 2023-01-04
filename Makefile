@@ -7,7 +7,7 @@ clean:
 
 .PHONY: build
 build: clean
-	node_modules/.bin/parcel build --cache-dir var/cache/parcel --dist-dir public src/index.html
+	node_modules/.bin/parcel build --cache-dir var/cache/parcel --dist-dir public --public-url /subsim src/index.html
 
 .PHONY: run
 run:
