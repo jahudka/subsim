@@ -1,5 +1,6 @@
 import { RefObject, useRef } from 'react';
-import { AreaConfig, SimulationOptions, useArea, useSimulation } from '../state';
+import { AreaConfig, Orientation, SimulationOptions, useArea, useSimulation } from '../state';
+import { rad } from '../utils';
 
 export function distance(ax: number, ay: number, bx: number, by: number): number {
   return Math.sqrt((ax - bx) ** 2 + (ay - by) ** 2);
@@ -28,7 +29,7 @@ export function drawLine(ctx: CanvasRenderingContext2D, x1: number, y1: number, 
 export function rotate(ctx: CanvasRenderingContext2D, cx: number, cy: number, angle: number): boolean {
   if (angle) {
     ctx.translate(cx, cy);
-    ctx.rotate(angle * Math.PI / 180);
+    ctx.rotate(rad(angle));
     ctx.translate(-cx, -cy);
     return true;
   } else {
@@ -36,12 +37,12 @@ export function rotate(ctx: CanvasRenderingContext2D, cx: number, cy: number, an
   }
 }
 
-export function swapAxes<T>(orientation: 'portrait' | 'landscape', x: T, y: T): [T, T] {
+export function swapAxes<T>(orientation: Orientation, x: T, y: T): [T, T] {
   return orientation === 'landscape' ? [y, x] : [x, y];
 }
 
-export function adjustRotation(orientation: 'portrait' | 'landscape', angle: number): number {
-  return orientation === 'portrait' ? -90 - angle : angle;
+export function adjustRotation(orientation: Orientation, angle: number, rad: boolean = false): number {
+  return orientation === 'portrait' ? (rad ? -Math.PI / 2 : -90) - angle : angle;
 }
 
 export type UiPrimitives = Omit<AreaConfig, 'depth'> & SimulationOptions & {

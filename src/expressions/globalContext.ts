@@ -1,3 +1,4 @@
+import { deg, rad } from '../utils';
 import { Context } from './context';
 
 export class GlobalContext extends Context {
@@ -22,12 +23,4 @@ export class GlobalContext extends Context {
     this.functions.set('deg', deg);
     this.functions.set('rad', rad);
   }
-}
-
-function deg(value: number): number {
-  return 180 * value / Math.PI;
-}
-
-function rad(value: number): number {
-  return Math.PI * value / 180;
 }

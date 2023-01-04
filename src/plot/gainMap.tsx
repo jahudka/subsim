@@ -1,6 +1,8 @@
-import { createContext, FC, useContext, useMemo, useRef } from 'react';
+import { createContext, FC, useContext, useMemo } from 'react';
+import { useFirst } from '../hooks';
 import { Guide, Orientation, Source, useGlobals, useGuides, useSources } from '../state';
 import { Children } from '../types';
+import { deg, rad } from '../utils';
 import { adjustRotation, dbToGain, distance, gainToDb, swapAxes, useUiPrimitives } from './utils';
 
 export type GainMap = Map<number, Map<number, number>>;
@@ -13,25 +15,38 @@ export function useGainMap(): GainMap | undefined {
 
 type ReflectionMap = Map<Source, Map<Guide, Source>>;
 
+function createReflectionMap(): ReflectionMap {
+  return new Map();
+}
+
+function createArrivalMap(): ArrivalMap {
+  return new Map();
+}
+
 export const GainMapProvider: FC<Children> = ({ children }) => {
   const { orientation, resolution, frequency, scale, x0, y0, w, h } = useUiPrimitives();
   const { $c: { value: $c } } = useGlobals();
-  const reflections = useRef<ReflectionMap>();
-  const arrivals = useRef<ArrivalMap>();
-  const walls = useGuides()
-    .filter((guide) => guide.kind === 'line' && guide.reflect);
-  const sources = useSources()
-    .filter((source) => source.enabled)
-    .flatMap((source) => resolveReflections(reflections.current ??= new Map(), orientation, source, walls));
+  const reflections = useFirst(createReflectionMap);
+  const arrivals = useFirst(createArrivalMap);
+  const guides = useGuides();
+  const walls = useMemo(() => guides.filter((guide) => guide.kind === 'line' && guide.reflect), [guides]);
+  const sources = useSources();
 
   useMemo(() => {
-    reflections.current?.clear();
-    arrivals.current?.clear();
+    reflections.current.clear();
+    arrivals.current.clear();
   }, [orientation, resolution, scale, x0, y0, w, h, $c]);
 
+  const activeSources = useMemo(
+    () => sources
+      .filter((source) => source.enabled)
+      .flatMap((source) => resolveReflections(reflections.current, orientation, source, walls)),
+    [sources, walls, orientation]
+  );
+
   const map = useMemo(
-    () => computeGainMap(orientation, resolution, frequency, scale, $c, w, h, x0, y0, sources, arrivals.current ??= new Map(), reflections.current ??= new Map()),
-    [arrivals, reflections, orientation, resolution, frequency, scale, $c, w, h, x0, y0, sources],
+    () => computeGainMap(orientation, resolution, frequency, scale, $c, w, h, x0, y0, activeSources, arrivals.current, reflections.current),
+    [arrivals, reflections, orientation, resolution, frequency, scale, $c, w, h, x0, y0, activeSources],
   );
 
   return (
@@ -104,7 +119,7 @@ function computeGainMap(
 
 function resolveReflections(
   map: ReflectionMap,
-  orientation: 'landscape' | 'portrait',
+  orientation: Orientation,
   source: Source,
   walls: Guide[],
 ): Source[] {
@@ -126,29 +141,20 @@ function resolveReflections(
   return [source, ...reflections.values()];
 }
 
-function reflect(source: Source, wall: Guide, orientation: 'landscape' | 'portrait'): Source {
-  const [sx, sy] = swapAxes(orientation, source.x.value, source.y.value);
-  const [wx, wy] = swapAxes(orientation, wall.x.value, wall.y.value);
-  const a = Math.tan(Math.PI * adjustRotation(orientation, wall.angle.value) / 180);
-
-  if (Number.isNaN(a)) {
-    return {
-      ...source,
-      x: { value: 2 * wx - sx, source: '' },
-      y: { value: sy, source: '' },
-    };
-  }
-
-  const b = 1, c = -a * wx + wy;
-  const m = Math.sqrt(a ** 2 + b ** 2);
-  const an = a / m, bn = b / m, cn = c / m;
-  const d = an * sx + bn * sy + cn;
-  const [rx, ry] = swapAxes(orientation, sx - 2 * an * d, sy - 2 * bn * d);
+function reflect(source: Source, wall: Guide, orientation: Orientation): Source {
+  const dx = source.x.value - wall.x.value;
+  const dy = source.y.value - wall.y.value;
+  const da = deg(Math.atan2(dy, dx)) - (90 - wall.angle.value);
+  const sin = Math.sin(-2 * rad(da));
+  const cos = Math.cos(-2 * rad(da));
+  const x = dx * cos - dy * sin;
+  const y = dx * sin + dy * cos;
 
   return {
     ...source,
-    x: { value: rx, source: '' },
-    y: { value: ry, source: '' },
+    x: { value: x, source: '' },
+    y: { value: y, source: '' },
+    angle: { value: source.angle.value + 180 + (orientation === 'portrait' ? 2 : -2) * da, source: '' },
   };
 }
 
@@ -178,10 +184,12 @@ function getArrivals(
     for (let y = resolution / 2; y <= h - resolution / 2; y += resolution) {
       const [sx, sy] = swapAxes(orientation, source.x.value, source.y.value);
       const dist = distance(x / scale, y / scale, sx + x0, sy + y0);
-      const angle = Math.atan2(sy + y0 - y / scale, sx + x0 - x / scale) + source.angle.value * Math.PI / 180;
+      const angle = Math.atan2(sy + y0 - y / scale, sx + x0 - x / scale)
+        + rad(source.angle.value)
+        + (orientation === 'portrait' ? Math.PI : 0);
 
       yMap.set(y, {
-        gain: dbToGain(source.gain.value) * source.model(adjustRotation(orientation, angle)) / Math.max(0.1, dist),
+        gain: dbToGain(source.gain.value) * source.model(adjustRotation(orientation, angle, true)) / Math.max(0.1, dist),
         delay: dist / $c,
       });
     }
