@@ -2,7 +2,7 @@ import { createContext, FC, useContext, useMemo } from 'react';
 import { useFirst } from '../hooks';
 import { Guide, Orientation, Source, useGlobals, useGuides, useSources } from '../state';
 import { Children } from '../types';
-import { deg, rad } from '../utils';
+import { rad } from '../utils';
 import { adjustRotation, dbToGain, distance, gainToDb, swapAxes, useUiPrimitives } from './utils';
 
 export type GainMap = Map<number, Map<number, number>>;
@@ -142,19 +142,22 @@ function resolveReflections(
 }
 
 function reflect(source: Source, wall: Guide, orientation: Orientation): Source {
-  const dx = source.x.value - wall.x.value;
-  const dy = source.y.value - wall.y.value;
-  const da = deg(Math.atan2(dy, dx)) - (90 - wall.angle.value);
-  const sin = Math.sin(-2 * rad(da));
-  const cos = Math.cos(-2 * rad(da));
-  const x = dx * cos - dy * sin;
-  const y = dx * sin + dy * cos;
+  const angle = -rad(wall.angle.value);
+  const a = Math.sin(angle);
+  const b = Math.cos(angle);
+  const c = -wall.y.value * a - wall.x.value * b;
+  const p = source.x.value;
+  const q = source.y.value;
+  const a2 = a ** 2;
+  const b2 = b ** 2;
+  const x = (p * (a2 - b2) - 2 * b * (a * q + c)) / (a2 + b2);
+  const y = (q * (b2 - a2) - 2 * a * (b * p + c)) / (a2 + b2);
 
   return {
     ...source,
     x: { value: x, source: '' },
     y: { value: y, source: '' },
-    angle: { value: source.angle.value + 180 + (orientation === 'portrait' ? 2 : -2) * da, source: '' },
+    angle: { value: -source.angle.value + 2 * wall.angle.value, source: '' },
   };
 }
 
