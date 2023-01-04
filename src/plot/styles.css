@@ -1,0 +1,30 @@
+#plot {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+#plot .plot-layers {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+#plot .plot-layers canvas + canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+#plot .plot-legend {
+  flex: 0 0 50px;
+  margin: 0 20px;
+}
+
+#plot .plot-tooltip {
+  display: none;
+}
+
+#plot .plot-layers:hover .plot-tooltip {
+  display: block;
+}

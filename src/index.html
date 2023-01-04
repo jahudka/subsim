@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Subsim</title>
+  </head>
+  <body>
+    <header class="row">
+      <h1 class="col">Subsim</h1>
+      <p class="col text-right"><em>scroll down for manual</em></p>
+    </header>
+    <div id="root"></div>
+    <div id="manual">
+      <h2>Manual</h2>
+      <div class="row">
+        <div class="col">
+          <h3>What is Subsim?</h3>
+          <p>
+            This tool is a bare-bones theoretical simulator of how multiple
+            subwoofers should sum in a given open area. It allows you to
+            place different sources of audio into a defined area
+            and adjust their settings, such as gain, phase flip, or delay;
+            the plot will show you how the audio would propagate through the
+            area and what the resulting amplitude at each point should be.
+          </p>
+        </div>
+        <div class="col">
+          <h3>Some important things</h3>
+          <p>
+            I developed this simulator while I was trying to learn about
+            subwoofer arrays myself, and while I'm reasonably confident that
+            the math is right and that the predictions the simulator outputs
+            should be pretty accurate, it bears saying that I'm not an authority
+            on any of this - I possess high-school level math skills at best,
+            I'm not an actual engineer with a degree or anything like that -
+            so it must be said that this tool comes with no guarantees of
+            any sort. It might be spot on, or it might be completely wrong.
+            But hopefully as a quick &amp; dirty tool for learning the basics
+            it might just do the trick.
+          </p>
+        </div>
+        <div class="col">
+          <h3>How it works</h3>
+          <p>
+            The simulator runs in 2D only and the simulation area represents
+            a birds-eye view of an open field, that is, there are no walls
+            which would generate reflections in the real world (although there
+            is a tool which can add walls, to some extent - see below). There
+            is also no attempt to simulate things like the speed of sound
+            changing based on weather conditions (although you can adjust it
+            manually if you're so inclined). Like I said, <i>bare-bones</i>.
+          </p>
+          <p>
+            The simulation is always run at one defined frequency, which you can
+            adjust in the Simulation options section. For each point in the plot
+            the distance to each source is computed; from the source distance
+            we can get two things: the gain factor (<code>1 / distance</code>)
+            and, based on the speed of sound and the source delay, if any, we can
+            get the arrival time, and from that we can get the phase offset for
+            that source at the defined frequency. Then it's just a matter of summing
+            the signals to produce the resulting gain factor and picking a suitable
+            color.
+          </p>
+        </div>
+        <div class="col">
+          <h3>Building blocks</h3>
+          <dl>
+            <dt>Sources</dt>
+            <dd>
+              The most important part of the simulator are the <i>sources</i> - these
+              represent individual speakers as idealised point sources.
+            </dd>
+            <dt>Guides</dt>
+            <dd>
+              Guides are visual helpers you can use to help you visualise the space
+              in which you're working - you can e.g. add a stage or an FOH and similar things.
+              Importantly, though, the <i>line</i> guides can also be used to affect
+              the simulation: they can be used to reflect the sound, like a wall would.
+              See below for more info on that.
+            </dd>
+            <dt>Expressions</dt>
+            <dd>
+              All numeric parameters of both <i>sources</i> and <i>guides</i> can actually
+              be represented using an <i>expression</i>, rather than just a number.
+              Expressions can contain <i>variables</i>, like <code>$c</code> for the speed
+              of sound, but you can also define your own variables. There is also a number
+              of <i>functions</i> you can call in expressions - see below for a reference.
+              This allows you to e.g. define a frequency for which you're tuning your array
+              as a variable and then specify all the spatial offsets and time delays of
+              your sources as a function of that frequency - meaning that if you want to
+              try a different frequency, you just adjust that one variable, and your entire
+              array will reconfigure automatically.
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <h3>Parameters and options reference</h3>
+      <div class="row">
+        <div class="col">
+          <h4>Simulation options</h4>
+          <dl>
+            <dt>Frequency</dt>
+            <dd>The frequency at which the simulation is computed.</dd>
+            <dt>Speed of sound</dt>
+            <dd>
+              The speed of sound, in meters per second, to use in the simulation;
+              it is also available in any <i>expressions</i> as the variable <code>$c</code>.
+            </dd>
+            <dt>Resolution</dt>
+            <dd>
+              The resolution of the simulation, in pixels. Essentially the lower this number
+              is, the more detailed the resulting plot will be, but also more computationally
+              intensive. If the simulation feels too sluggish when changing parameters, you can
+              try increasing this value a little.
+            </dd>
+          </dl>
+        </div>
+        <div class="col">
+          <h4>Area config</h4>
+          <dl>
+            <dt>Scale</dt>
+            <dd>
+              The scale of the plot area, in pixels per meter, or in other words, how many
+              pixels should be drawn for each meter.
+            </dd>
+            <dt>Width</dt>
+            <dd>The area width, in meters.</dd>
+            <dt>Depth</dt>
+            <dd>The area depth, in meters. This should correspond to the axis defined by the stage and the FOH.</dd>
+            <dt>X0, Y0</dt>
+            <dd>The offset of point <code>[0, 0]</code> on the plot along the X / Width and Y / Depth axes, respectively.</dd>
+            <dt>Orientation</dt>
+            <dd>The orientation of the area.</dd>
+          </dl>
+        </div>
+        <div class="col">
+          <h4>Sources</h4>
+          <dl>
+            <dt>on</dt>
+            <dd>Whether the source is included in the simulation or not.</dd>
+            <dt>x, y, angle</dt>
+            <dd>
+              The position and rotation of the source in the simulation area. Note that this is the
+              position of the idealised point source, which is idealised to be located in the center
+              of the front grille of the speaker, since that will probably be the closest approximation
+              for generic speakers.
+            </dd>
+            <dt>width, depth</dt>
+            <dd>The size of the physical speaker. This is just a visual guide, it doesn't affect the simulation.</dd>
+            <dt>delay</dt>
+            <dd>The delay time set for this source, in ms.</dd>
+            <dt>invert</dt>
+            <dd>Flips the polarity of the source.</dd>
+            <dt>pattern</dt>
+            <dd>The polar pattern of the source.</dd>
+          </dl>
+        </div>
+        <div class="col">
+          <h4>Guides</h4>
+          <dl>
+            <dt>type</dt>
+            <dd>'rect' or 'line'</dd>
+            <dt>x, y, angle</dt>
+            <dd>
+              The position and rotation of the guide. For rectangular guides, this is the position of the
+              center of the rectangle; for lines, it is a point through which the line must pass.
+            </dd>
+            <dt>width, height</dt>
+            <dd>The width and height of rectangular guides.</dd>
+            <dt>reflect</dt>
+            <dd>
+              Whether a line guide should reflect sound.
+              This is currently implemented by just mirroring all active sources along
+              the line, which means that the resulting plot will still show audio
+              on both sides of the line, but you can just ignore the side you don't
+              care about. Also, multiple reflecting lines don't interact - each line
+              will simply mirror the original sources, and that's that. Basically
+              it should tell you what first reflections will do, which (especially
+              in outdoors settings, where you may have just a building on one side
+              or something similar) should be useful info.
+            </dd>
+            <dt>color, label</dt>
+            <dd>The color and label of the guide.</dd>
+          </dl>
+        </div>
+        <div class="col">
+          <h3>Expressions reference</h3>
+          <h4>Basic info</h4>
+          <ul>
+            <li>
+              Supported operators: <code>+</code>, <code>-</code>, <code>*</code>,
+              <code>/</code> and <code>^</code> (for exponentiation).
+              Operator precedence follows standard mathematical conventions.
+            </li>
+            <li>
+              Parentheses are supported.
+            </li>
+            <li>
+              Undefined variables are resolved to <code>0</code>.
+            </li>
+            <li>
+              Invalid expressions (e.g. due to syntax errors) resolve to <code>0</code>.
+            </li>
+            <li>
+              Calls to nonexistent functions make the entire
+              expression fail, which makes its output <code>0</code>.
+            </li>
+            <li>
+              Whitespace is ignored.
+            </li>
+          </ul>
+          <h4>Function reference</h4>
+          <dl class="function-reference">
+            <dt><code><span class="hl-identifier">qw</span>(<span class="hl-identifier">freq</span>: number): number</code></dt>
+            <dd>
+              Returns a quarter of the wavelength, in meters, of the specified frequency at the current speed of sound.
+              Useful for setting distances between sources.
+            </dd>
+            <dt><code><span class="hl-identifier">qt</span>(<span class="hl-identifier">freq</span>: number): number</code></dt>
+            <dd>Returns a quarter of the period of the specified frequency, in ms. Useful for setting source delays.</dd>
+            <dt><code><span class="hl-identifier">dt</span>(<span class="hl-identifier">dist</span>: number): number</code></dt>
+            <dd>Returns the delay produced by the specified physical distance, in ms.</dd>
+            <dt>
+              <code><span class="hl-identifier">sin</span>(<span class="hl-identifier">angle</span>: number): number</code><br />
+              <code><span class="hl-identifier">cos</span>(<span class="hl-identifier">angle</span>: number): number</code><br />
+              <code><span class="hl-identifier">tan</span>(<span class="hl-identifier">angle</span>: number): number</code>
+            </dt>
+            <dd>
+              Standard trigonometric functions. Angles are specified in degrees.
+            </dd>
+            <dt>
+              <code><span class="hl-identifier">asin</span>(<span class="hl-identifier">value</span>: number): number</code><br />
+              <code><span class="hl-identifier">acos</span>(<span class="hl-identifier">value</span>: number): number</code><br />
+              <code><span class="hl-identifier">atan</span>(<span class="hl-identifier">value</span>: number): number</code>
+            </dt>
+            <dd>
+              Standard inverse trigonometric functions. Angles are returned in degrees.
+            </dd>
+            <dt>
+              <code><span class="hl-identifier">atan2</span>(<span class="hl-identifier">y</span>: number, <span class="hl-identifier">x</span>: number): number</code>
+            </dt>
+            <dd>
+              Inverse tangent from coordinates. Note that <code>y</code> is specified first. The angle is returned in degrees.
+            </dd>
+            <dt>
+              <code><span class="hl-identifier">deg</span>(<span class="hl-identifier">angleInRadians</span>: number): number</code><br />
+              <code><span class="hl-identifier">rad</span>(<span class="hl-identifier">angleInDegrees</span>: number): number</code>
+            </dt>
+            <dd>These functions convert angles between degrees and radians.</dd>
+            <dt>
+              <code><span class="hl-identifier">min</span>(<span class="hl-identifier">value</span>: number[, <span class="hl-identifier">value</span>: number...]): number</code><br />
+              <code><span class="hl-identifier">max</span>(<span class="hl-identifier">value</span>: number[, <span class="hl-identifier">value</span>: number...]): number</code>
+            </dt>
+            <dd>These functions return, respectively, the smallest (most negative) and largest (most positive) of the supplied parameters.</dd>
+            <dt><code><span class="hl-identifier">clamp</span>(<span class="hl-identifier">value</span>: number, <span class="hl-identifier">min</span>: number, <span class="hl-identifier">max</span>: number): number</code></dt>
+            <dd>
+              This function returns <code>value</code> clamped to the range <code>&lt;min, max&gt;</code>.
+              It is a shortcut for <code>max(min, min(max, value))</code>.
+            </dd>
+            <dt>
+              <code><span class="hl-identifier">round</span>(<span class="hl-identifier">value</span>: number): number</code><br />
+              <code><span class="hl-identifier">floor</span>(<span class="hl-identifier">value</span>: number): number</code><br />
+              <code><span class="hl-identifier">ceil</span>(<span class="hl-identifier">value</span>: number): number</code>
+            </dt>
+            <dd>Standard rounding functions.</dd>
+            <dt><code><span class="hl-identifier">abs</span>(<span class="hl-identifier">value</span>: number): number</code></dt>
+            <dd>Returns the absolute value of the specified number.</dd>
+            <dt><code><span class="hl-identifier">sign</span>(<span class="hl-identifier">value</span>: number): number</code></dt>
+            <dd>Returns <code>-1</code> if the value is less than zero, <code>1</code> if the value is greater than zero, and <code>0</code> if the value is zero.</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./index.tsx"></script>
+  </body>
+</html>
