@@ -162,7 +162,7 @@ function reflect(source: Source, wall: Line): Source {
   const b2 = b ** 2;
   const x = (p * (a2 - b2) - 2 * b * (a * q + c)) / (a2 + b2);
   const y = (q * (b2 - a2) - 2 * a * (b * p + c)) / (a2 + b2);
-  const absorption = wall.absorption.value >= 0 ? 1 - wall.absorption.value : dbToGain(wall.absorption.value);
+  const absorption = wall.absorption.value >= 0 ? Math.sqrt(1 - wall.absorption.value) : dbToGain(wall.absorption.value);
   const gain = dbToGain(source.gain.value);
 
   return {
