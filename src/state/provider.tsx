@@ -1,37 +1,12 @@
 import { createContext, Dispatch, FC, useContext, useReducer } from 'react';
 import { Children } from '../types';
 import { Action } from './actions';
-import { dispatchAction } from './reducer';
+import { dispatchAction, manager } from './reducer';
 import { AreaConfig, Guide, Project, SimulationOptions, Source, VariableMap } from './types';
 
-function createProject(): Project {
-  return {
-    area: {
-      width: 140,
-      depth: 100,
-      x0: 70,
-      y0: 25,
-      scale: 6,
-      orientation: 'portrait',
-    },
-    simulation: {
-      frequency: 60,
-      resolution: 4,
-    },
-    sources: [],
-    guides: [],
-    globals: {
-      $c: {
-        min: 300,
-        max: 400,
-        value: 343,
-      },
-    },
-    variables: {},
-  };
-}
-
 const Dispatch = createContext<Dispatch<Action>>(undefined as any);
+const ProjectName = createContext<string>(undefined as any);
+const ProjectList = createContext<Project[]>(undefined as any);
 const Area = createContext<AreaConfig>(undefined as any);
 const Sim = createContext<SimulationOptions>(undefined as any);
 const Sources = createContext<Source[]>(undefined as any);
@@ -41,6 +16,14 @@ const Vars = createContext<VariableMap>(undefined as any);
 
 export function useDispatch(): Dispatch<Action> {
   return useContext(Dispatch);
+}
+
+export function useProjectName(): string {
+  return useContext(ProjectName);
+}
+
+export function useProjectList(): Project[] {
+  return useContext(ProjectList);
 }
 
 export function useArea(): AreaConfig {
@@ -68,23 +51,27 @@ export function useGlobals(): VariableMap {
 }
 
 export const StateProvider: FC<Children> = ({ children }) => {
-  const [project, dispatch] = useReducer(dispatchAction, undefined, createProject);
+  const [project, dispatch] = useReducer(dispatchAction, undefined, () => manager.loadLast());
 
   return (
     <Dispatch.Provider value={dispatch}>
-      <Area.Provider value={project.area}>
-        <Sim.Provider value={project.simulation}>
-          <Sources.Provider value={project.sources}>
-            <Guides.Provider value={project.guides}>
-              <Globals.Provider value={project.globals}>
-                <Vars.Provider value={project.variables}>
-                  {children}
-                </Vars.Provider>
-              </Globals.Provider>
-            </Guides.Provider>
-          </Sources.Provider>
-        </Sim.Provider>
-      </Area.Provider>
+      <ProjectName.Provider value={project.name}>
+        <ProjectList.Provider value={manager.getList()}>
+          <Area.Provider value={project.area}>
+            <Sim.Provider value={project.simulation}>
+              <Sources.Provider value={project.sources}>
+                <Guides.Provider value={project.guides}>
+                  <Globals.Provider value={project.globals}>
+                    <Vars.Provider value={project.variables}>
+                      {children}
+                    </Vars.Provider>
+                  </Globals.Provider>
+                </Guides.Provider>
+              </Sources.Provider>
+            </Sim.Provider>
+          </Area.Provider>
+        </ProjectList.Provider>
+      </ProjectName.Provider>
     </Dispatch.Provider>
   );
 };

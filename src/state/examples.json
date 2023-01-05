@@ -1,0 +1,252 @@
+[
+  {
+    "name": "1 sub per side",
+    "created": "2023-01-05T01:55:00.000Z",
+    "lastModified": "2023-01-05T01:55:00.000Z",
+    "area": { "width": 100, "depth": 60, "x0": 50, "y0": 20, "scale": 8, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "stageWidth / -2 - 0.5", "value": -4.5 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "stageWidth / 2 + 0.5", "value": 4.5 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "stageDepth / -2", "value": -3 },
+        "angle": { "source": "0", "value": 0 },
+        "color": "#000",
+        "kind": "rect",
+        "width": { "source": "stageWidth", "value": 8 },
+        "height": { "source": "stageDepth", "value": 6 },
+        "label": "stage"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": {
+      "stageWidth": { "min": 2, "max": 50, "value": 8 },
+      "stageDepth": { "min": 2, "max": 50, "value": 6 }
+    }
+  },
+  {
+    "name": "center cluster",
+    "created": "2023-01-05T01:54:00.000Z",
+    "lastModified": "2023-01-05T01:54:00.000Z",
+    "area": { "width": 100, "depth": 80, "x0": 50, "y0": 30, "scale": 8, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "-0.5 - spacing / 2", "value": -0.5 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "0.5 + spacing / 2", "value": 0.5 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "-4.5", "value": -4.5 },
+        "angle": { "source": "0", "value": 0 },
+        "color": "#000",
+        "kind": "rect",
+        "width": { "source": "10", "value": 10 },
+        "height": { "source": "6", "value": 6 },
+        "label": "stage"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": { "spacing": { "min": 0, "max": 10, "value": 0 } }
+  },
+  {
+    "name": "2-element cardioid",
+    "created": "2023-01-05T01:53:00.000Z",
+    "lastModified": "2023-01-05T01:53:00.000Z",
+    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "180", "value": 180 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "qt(f)", "value": 4.166666666666667 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": true,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "qw(f)", "value": 1.4291666666666667 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "-3", "value": -3 },
+        "angle": { "source": "0", "value": 0 },
+        "color": "#000",
+        "kind": "rect",
+        "width": { "source": "10", "value": 10 },
+        "height": { "source": "6", "value": 6 },
+        "label": "stage"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
+  },
+  {
+    "name": "2-element end-fire",
+    "created": "2023-01-05T01:52:00.000Z",
+    "lastModified": "2023-01-05T01:52:00.000Z",
+    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "qw(f)", "value": 1.4291666666666667 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "qt(f)", "value": 4.166666666666667 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "-4.5", "value": -4.5 },
+        "angle": { "source": "0", "value": 0 },
+        "color": "#000",
+        "kind": "rect",
+        "width": { "source": "10", "value": 10 },
+        "height": { "source": "6", "value": 6 },
+        "label": "stage"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
+  },
+  {
+    "name": "horizontal cardioid stack",
+    "created": "2023-01-05T01:51:00.000Z",
+    "lastModified": "2023-01-05T01:51:00.000Z",
+    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "-1", "value": -1 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "-0.6", "value": -0.6 },
+        "angle": { "source": "180", "value": 180 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "dt(0.6)", "value": 1.749271137026239 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": true,
+        "model": "omni",
+        "enabled": true
+      },
+      {
+        "x": { "source": "1", "value": 1 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "-4.5", "value": -4.5 },
+        "angle": { "source": "0", "value": 0 },
+        "color": "#000",
+        "kind": "rect",
+        "width": { "source": "10", "value": 10 },
+        "height": { "source": "6", "value": 6 },
+        "label": "stage"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": { }
+  }
+]

@@ -1,5 +1,24 @@
 import { ExpressionProperty, Line, Project, Rect, Source } from './types';
 
+export type CreateProjectAction = {
+  type: 'create-project';
+};
+
+export type SaveProjectAction = {
+  type: 'save-project';
+  name: string;
+};
+
+export type LoadProjectAction = {
+  type: 'load-project';
+  name: string;
+};
+
+export type DeleteProjectAction = {
+  type: 'delete-project';
+  name: string;
+};
+
 export type OptionKind = 'area' | 'simulation';
 export type OptionName<K extends OptionKind> = Exclude<keyof Project[K], symbol>;
 export type OptionValue<K extends OptionKind, O extends OptionName<K>> = Project[K][O];
@@ -72,9 +91,10 @@ export type DeleteVariableAction = {
 };
 
 export type Action =
-// | { type: 'set-project-name', name: string }
-// | { type: 'save-project', force: boolean }
-// | { type: 'load-project', name: string }
+  | CreateProjectAction
+  | SaveProjectAction
+  | LoadProjectAction
+  | DeleteProjectAction
   | SetOptionAction
   | AddSourceAction
   | AddGuideAction
@@ -85,6 +105,21 @@ export type Action =
   | AddVariableAction
   | SetVariableAction
   | DeleteVariableAction;
+
+export const proj = {
+  create(): CreateProjectAction {
+    return { type: 'create-project' };
+  },
+  save(name: string): SaveProjectAction {
+    return { type: 'save-project', name };
+  },
+  load(name: string): LoadProjectAction {
+    return { type: 'load-project', name };
+  },
+  del(name: string): DeleteProjectAction {
+    return { type: 'delete-project', name };
+  },
+};
 
 export const set = {
   opt<K extends OptionKind, O extends OptionName<K>>(kind: K, option: O, value: OptionValue<K, O>): SetOptionAction<K, O> {

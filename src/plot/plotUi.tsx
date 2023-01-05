@@ -126,7 +126,7 @@ function renderGuides(
       case 'rect': {
         const gw = guide.width.value * scale;
         const gh = guide.height.value * scale;
-        let r = rotate(ctx, gx, h - gy, adjustRotation(orientation, -guide.angle.value));
+        let r = rotate(ctx, gx, h - gy, adjustRotation(orientation, 180 - guide.angle.value));
 
         ctx.fillStyle = '#ffffff55';
         ctx.strokeStyle = guide.color;
@@ -156,6 +156,7 @@ function renderGuides(
           ctx.fillStyle = guide.color;
           ctx.fillText(guide.label, gx, h - gy);
         }
+
         r && ctx.resetTransform();
         break;
       }

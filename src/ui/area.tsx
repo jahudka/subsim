@@ -1,11 +1,11 @@
 import { FC, useCallback } from 'react';
 import { Orientation, set, useArea, useDispatch } from '../state';
-import { ListField, ListFieldOption, NumericField } from './fields';
+import { ListField, NumericField } from './fields';
 import { Row } from './tables';
 
-const orientations: ListFieldOption<Orientation>[] = [
-  { label: 'landscape', value: 'landscape' },
-  { label: 'portrait', value: 'portrait' },
+const orientations: Orientation[] = [
+  'portrait',
+  'landscape',
 ];
 
 export const AreaUI: FC = () => {

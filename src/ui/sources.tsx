@@ -3,16 +3,13 @@ import {
   $id,
   Action,
   add,
-  cardioid,
   del,
-  omni,
   set,
   Source,
-  SourceModel,
   useDispatch,
   useSources,
 } from '../state';
-import { BooleanField, ExpressionField, ListField, ListFieldOption } from './fields';
+import { BooleanField, ExpressionField, ListField } from './fields';
 
 export const SourcesUI: FC = () => {
   const sources = useSources();
@@ -59,9 +56,9 @@ type SourceUIProps = {
   dispatch: Dispatch<Action>;
 };
 
-const models: ListFieldOption<SourceModel>[] = [
-  { label: 'omni', value: omni },
-  { label: 'cardioid', value: cardioid },
+const models: string[] = [
+  'omni',
+  'cardioid',
 ];
 
 const SourceUI: FC<SourceUIProps> = ({ idx, source, dispatch }) => (

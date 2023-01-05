@@ -12,6 +12,10 @@ body {
   min-height: 100vh;
 }
 
+header h1 span {
+  white-space: nowrap;
+}
+
 header, #main, #manual {
   padding: 10px 20px;
 }
@@ -29,7 +33,7 @@ header, #main, #manual {
 }
 
 .col {
-  flex: 0 0 calc(50%);
+  flex: 1 1 calc(50%);
   min-width: 300px;
   padding: 0 10px;
   box-sizing: border-box;
@@ -73,4 +77,17 @@ dl dd {
 .function-reference dt code {
   font-weight: normal;
   color: inherit;
+}
+
+#project-list {
+  position: fixed;
+  left: 50%;
+  top: 0;
+  width: 680px;
+  max-width: 96vw;
+  padding: 30px 50px;
+  box-sizing: border-box;
+  transform: translateX(-50%);
+  background: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }

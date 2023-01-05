@@ -1,12 +1,14 @@
 import { Expression } from '../expressions';
 
 export const $id = Symbol('$id');
+export const $expr = Symbol('$expr');
+export const $vars = Symbol('$vars');
 
 export type ExpressionProperty = {
   source: string;
   value: number;
-  expression?: Expression;
-  variables?: string[];
+  [$expr]?: Expression;
+  [$vars]?: string[];
   error?: string;
 };
 
@@ -30,8 +32,10 @@ export type SourceModel = {
   (angle: number): number;
 };
 
-export const omni: SourceModel = () => 1;
-export const cardioid: SourceModel = (a) => (1 - Math.cos(a)) / 2;
+export const models: Record<string, SourceModel> = {
+  omni: () => 1,
+  cardioid: (a) => (1 - Math.cos(a)) / 2,
+};
 
 export type Source = {
   [$id]: number;
@@ -43,7 +47,7 @@ export type Source = {
   delay: ExpressionProperty;
   gain: ExpressionProperty;
   invert: boolean;
-  model: SourceModel;
+  model: string;
   enabled: boolean;
 };
 
@@ -81,7 +85,9 @@ export type Variable = {
 export type VariableMap = Record<string, Variable>;
 
 export type Project = {
-  // name: string;
+  name: string;
+  created: Date,
+  lastModified: Date,
   area: AreaConfig;
   simulation: SimulationOptions;
   sources: Source[];

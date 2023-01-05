@@ -1,19 +1,13 @@
 import { Context, extractVariables, GlobalContext, Literal, Parser } from '../expressions';
 import { Action, GuideProperty, PropertyValue, SetOptionAction, SourceProperty } from './actions';
-import { $id, ExpressionProperty, Line, omni, Project, Rect, Source } from './types';
+import { ProjectManager } from './manager';
+import { $expr, $id, $vars, ExpressionProperty, Line, Project, Rect, Source } from './types';
 
 const parser = new Parser();
 const globals = new GlobalContext();
 const ctx = new Context(globals);
-let gid = 0;
 
-function genId(): number {
-  if (++gid >= Number.MAX_SAFE_INTEGER) {
-    gid = 0;
-  }
-
-  return gid;
-}
+export const manager = new ProjectManager(parser);
 
 globals.variables.set('$c', 343);
 globals.functions.set('qw', function qw(freq: number) { return 0.25 * this.get('$c') / freq; });
@@ -22,6 +16,10 @@ globals.functions.set('dt', function dt(dist: number) { return 1000 * dist / thi
 
 export function dispatchAction(project: Project, action: Action): Project {
   switch (action.type) {
+    case 'create-project': return manager.create();
+    case 'save-project': return saveProject(project, action.name);
+    case 'load-project': return manager.load(action.name);
+    case 'delete-project': return deleteProject(project, action.name);
     case 'set-opt': return setOption(project, action);
     case 'add-src': return addSource(project);
     case 'add-guide': return addGuide(project, action.kind);
@@ -35,6 +33,18 @@ export function dispatchAction(project: Project, action: Action): Project {
   }
 }
 
+function saveProject(project: Project, name: string): Project {
+  project.name = name;
+  project.lastModified = new Date();
+  manager.save(project);
+  return { ...project };
+}
+
+function deleteProject(project: Project, name: string): Project {
+  manager.delete(name);
+  return { ...project };
+}
+
 function setOption(project: Project, action: SetOptionAction): Project {
   project[action.kind][action.option] = action.value;
   project[action.kind] = { ...project[action.kind] } as any;
@@ -43,7 +53,7 @@ function setOption(project: Project, action: SetOptionAction): Project {
 
 function addSource(project: Project): Project {
   project.sources = project.sources.concat({
-    [$id]: genId(),
+    [$id]: manager.nextId(),
     x: expr(0),
     y: expr(0),
     angle: expr(0),
@@ -52,7 +62,7 @@ function addSource(project: Project): Project {
     delay: expr(0),
     gain: expr(0),
     invert: false,
-    model: omni,
+    model: 'omni',
     enabled: true,
   });
 
@@ -61,7 +71,7 @@ function addSource(project: Project): Project {
 
 function addGuide(project: Project, kind: 'rect' | 'line'): Project {
   const common = {
-    [$id]: genId(),
+    [$id]: manager.nextId(),
     x: expr(0),
     y: expr(-3),
     angle: expr(0),
@@ -128,8 +138,8 @@ function expr(value: number): ExpressionProperty {
   return {
     source: value.toString(),
     value,
-    expression: new Literal(0, value),
-    variables: [],
+    [$expr]: new Literal(0, value),
+    [$vars]: [],
   };
 }
 
@@ -146,8 +156,8 @@ function toExpr(source: string): ExpressionProperty {
   };
 
   try {
-    property.expression = parser.parse(source);
-    property.variables = extractVariables(property.expression);
+    property[$expr] = parser.parse(source);
+    property[$vars] = extractVariables(property[$expr]);
   } catch (e) {
     property.error = e.message;
   }
@@ -157,12 +167,12 @@ function toExpr(source: string): ExpressionProperty {
 }
 
 function solve(property: ExpressionProperty): boolean {
-  if (!property.expression) {
+  if (!property[$expr]) {
     return false;
   }
 
   try {
-    const value = property.expression.evaluate(ctx);
+    const value = property[$expr].evaluate(ctx);
 
     if (value !== property.value) {
       property.value = value;
@@ -184,7 +194,7 @@ function checkDependencies(project: Project, variable: string): Project {
     let ch = false;
 
     for (const prop of ['x', 'y', 'angle', 'width', 'depth', 'delay', 'gain']) {
-      if (src[prop].variables.includes(variable) && solve(src[prop])) {
+      if (src[prop][$vars].includes(variable) && solve(src[prop])) {
         ch1 = ch = true;
       }
     }
@@ -198,7 +208,7 @@ function checkDependencies(project: Project, variable: string): Project {
     let ch = false;
 
     for (const prop of ['x', 'y', 'angle', 'width', 'height']) {
-      if (src[prop] && src[prop].variables.includes(variable) && solve(src[prop])) {
+      if (src[prop] && src[prop][$vars].includes(variable) && solve(src[prop])) {
         ch2 = ch = true;
       }
     }

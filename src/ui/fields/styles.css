@@ -145,6 +145,7 @@
   border: none;
   background: #ccf;
   font: 12px/1.5 sans-serif;
+  cursor: pointer;
 }
 
 .btn.btn-add {
@@ -157,6 +158,16 @@
   padding-right: 0.5em;
   background: #fcc;
 }
-.btn.btn-delete:before {
+
+.btn.btn-delete:empty:before {
   content: '\00D7';
+}
+
+.btn.btn-dropdown {
+  font: inherit;
+  width: 1em;
+  height: 1em;
+  padding: 0;
+  vertical-align: middle;
+  background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") center center / 0.8em 0.6em no-repeat;
 }

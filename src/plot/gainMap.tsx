@@ -1,6 +1,6 @@
 import { createContext, FC, useContext, useMemo } from 'react';
 import { useFirst } from '../hooks';
-import { Guide, Orientation, Source, useGlobals, useGuides, useSources } from '../state';
+import { Guide, models, Orientation, Source, useGlobals, useGuides, useSources } from '../state';
 import { Children } from '../types';
 import { rad } from '../utils';
 import { adjustRotation, dbToGain, distance, gainToDb, swapAxes, useUiPrimitives } from './utils';
@@ -192,7 +192,7 @@ function getArrivals(
         + (orientation === 'portrait' ? Math.PI : 0);
 
       yMap.set(y, {
-        gain: dbToGain(source.gain.value) * source.model(adjustRotation(orientation, angle, true)) / Math.max(0.1, dist),
+        gain: dbToGain(source.gain.value) * models[source.model](adjustRotation(orientation, angle, true)) / Math.max(0.1, dist),
         delay: dist / $c,
       });
     }
