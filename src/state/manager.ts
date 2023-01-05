@@ -2,7 +2,7 @@ import { extractVariables, Parser } from '../expressions';
 import { migrate } from './migrations';
 import { $expr, $id, $vars, ExpressionProperty, Project } from './types';
 import examples from './examples.json';
-import { randomString } from './utils';
+import { randomString, safeDeepClone } from './utils';
 
 export class ProjectManager {
   private readonly parser: Parser;
@@ -25,14 +25,14 @@ export class ProjectManager {
 
   loadLast(): Project {
     for (const project of this.getList()) {
-      return project;
+      return safeDeepClone(project);
     }
 
     return this.create();
   }
 
   load(id: string): Project {
-    return this.projects.get(id)!;
+    return safeDeepClone(this.projects.get(id)!);
   }
 
   save(project: Project): void {
@@ -85,7 +85,7 @@ export class ProjectManager {
     };
 
     this.save(project);
-    return { ...project };
+    return safeDeepClone(project);
   }
 
   private getNewProjectId(): string {
