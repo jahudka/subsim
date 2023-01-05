@@ -7,20 +7,21 @@ import {
   tokenize,
 } from '../../expressions';
 import { ExpressionProperty } from '../../state';
+import { Children } from '../../types';
 import { Field } from './field';
 
-export type ExpressionFieldProps = {
+export type ExpressionFieldProps = Children & {
   id?: string;
   state: ExpressionProperty;
   onChange: (value: string) => void;
   className?: string;
 };
 
-export const ExpressionField: FC<ExpressionFieldProps> = ({ id, state, onChange, className }) => {
+export const ExpressionField: FC<ExpressionFieldProps> = ({ id, state, onChange, className, children }) => {
   const value = Number.isNaN(state.value) ? '?' : state.value.toFixed(2).replace(/\.?0+$/, '');
 
   return (
-    <Field type="expression" className={className} error={state.error}>
+    <Field type="expression" className={className} error={state.error} addon={children}>
       <Editor textareaId={id} onValueChange={onChange} highlight={highlight} value={state.source} ignoreTabKey />
       <span className="field-tooltip field-expression-source">{highlight(state.source)}</span>
       <span className="field-tooltip field-expression-value">{value}</span>

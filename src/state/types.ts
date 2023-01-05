@@ -70,6 +70,7 @@ export type Line = {
   y: ExpressionProperty;
   angle: ExpressionProperty;
   reflect: boolean;
+  absorption: ExpressionProperty;
   color: string;
   label?: string;
 };
@@ -85,6 +86,7 @@ export type Variable = {
 export type VariableMap = Record<string, Variable>;
 
 export type Project = {
+  id: string;
   name: string;
   created: Date,
   lastModified: Date,
@@ -94,4 +96,11 @@ export type Project = {
   guides: Guide[];
   variables: VariableMap;
   globals: VariableMap;
+};
+
+export type ProjectInfo = {
+  id: string;
+  name: string;
+  created: Date;
+  lastModified: Date;
 };

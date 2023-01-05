@@ -1,6 +1,8 @@
 import { extractVariables, Parser } from '../expressions';
+import { migrate } from './migrations';
 import { $expr, $id, $vars, ExpressionProperty, Project } from './types';
 import examples from './examples.json';
+import { randomString } from './utils';
 
 export class ProjectManager {
   private readonly parser: Parser;
@@ -10,36 +12,36 @@ export class ProjectManager {
 
   constructor(parser: Parser) {
     this.parser = parser;
-    this.projects = new Map(
-      this.readStorage()
-        .map((project) => [project.name, this.hydrate(project)] as const)
-        .sort(([, a], [, b]) => b.lastModified.getTime() - a.lastModified.getTime())
-    );
+    this.projects = new Map(this.readStorage().map((project) => [project.id, this.hydrate(project)]));
+  }
+
+  getName(id: string): string {
+    return this.projects.get(id)!.name;
   }
 
   getList(): Project[] {
-    return this.list ??= [...this.projects.values()];
+    return this.list ??= [...this.projects.values()].sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
   }
 
   loadLast(): Project {
-    for (const project of this.projects.values()) {
+    for (const project of this.getList()) {
       return project;
     }
 
     return this.create();
   }
 
-  load(name: string): Project {
-    return this.projects.get(name)!;
+  load(id: string): Project {
+    return this.projects.get(id)!;
   }
 
   save(project: Project): void {
-    this.projects.set(project.name, project);
+    this.projects.set(project.id, project);
     this.writeStorage();
   }
 
-  delete(name: string): void {
-    this.projects.delete(name);
+  delete(id: string): void {
+    this.projects.delete(id);
     this.writeStorage();
   }
 
@@ -54,7 +56,8 @@ export class ProjectManager {
   create(): Project {
     const created = new Date();
     const project: Project = {
-      name: this.getNewProjectName(),
+      id: this.getNewProjectId(),
+      name: 'new project',
       created,
       lastModified: created,
       area: {
@@ -85,31 +88,28 @@ export class ProjectManager {
     return { ...project };
   }
 
-  private getNewProjectName(): string {
-    if (!this.projects.has('new project')) {
-      return 'new project';
-    }
+  private getNewProjectId(): string {
+    while (true) {
+      const id = randomString();
 
-    for (let i = 2; ; ++i) {
-      const name = `new project ${i}`;
-
-      if (!this.projects.has(name)) {
-        return name;
+      if (!this.projects.has(id)) {
+        return id;
       }
     }
   }
 
   private readStorage(): Project[] {
-    return JSON.parse(localStorage.getItem('projects') ?? 'null') || examples;
+    const projects: Project[] = migrate(JSON.parse(localStorage.getItem('projects') ?? '[]'));
+    return projects.concat(examples as any);
   }
 
   private writeStorage(): void {
-    localStorage.setItem('projects', JSON.stringify([...this.projects.values()]));
+    const projects = [...this.projects.values()].filter((p) => !/^examples\//.test(p.id));
+    localStorage.setItem('projects', JSON.stringify(projects));
     this.list = undefined;
   }
 
   private hydrate(project: Project): Project {
-    project[$id] = this.nextId();
     project.created = new Date(project.created);
     project.lastModified = new Date(project.lastModified);
 
@@ -130,6 +130,8 @@ export class ProjectManager {
       if (guide.kind === 'rect') {
         this.hydrateExpr(guide.width);
         this.hydrateExpr(guide.height);
+      } else {
+        this.hydrateExpr(guide.absorption);
       }
     }
 

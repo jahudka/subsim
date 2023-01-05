@@ -1,6 +1,15 @@
 import { createContext, FC, useContext, useMemo } from 'react';
 import { useFirst } from '../hooks';
-import { Guide, models, Orientation, Source, useGlobals, useGuides, useSources } from '../state';
+import {
+  Guide,
+  Line,
+  models,
+  Orientation,
+  Source,
+  useGlobals,
+  useGuides,
+  useSources,
+} from '../state';
 import { Children } from '../types';
 import { rad } from '../utils';
 import { adjustRotation, dbToGain, distance, gainToDb, swapAxes, useUiPrimitives } from './utils';
@@ -13,7 +22,7 @@ export function useGainMap(): GainMap | undefined {
   return useContext(Ctx);
 }
 
-type ReflectionMap = Map<Source, Map<Guide, Source>>;
+type ReflectionMap = Map<Source, Map<Line, Source>>;
 
 function createReflectionMap(): ReflectionMap {
   return new Map();
@@ -23,13 +32,17 @@ function createArrivalMap(): ArrivalMap {
   return new Map();
 }
 
+function isReflectingLine(guide: Guide): guide is Line {
+  return guide.kind === 'line' && guide.reflect;
+}
+
 export const GainMapProvider: FC<Children> = ({ children }) => {
   const { orientation, resolution, frequency, scale, x0, y0, w, h } = useUiPrimitives();
   const { $c: { value: $c } } = useGlobals();
   const reflections = useFirst(createReflectionMap);
   const arrivals = useFirst(createArrivalMap);
   const guides = useGuides();
-  const walls = useMemo(() => guides.filter((guide) => guide.kind === 'line' && guide.reflect), [guides]);
+  const walls = useMemo(() => guides.filter(isReflectingLine), [guides]);
   const sources = useSources();
 
   useMemo(() => {
@@ -40,8 +53,8 @@ export const GainMapProvider: FC<Children> = ({ children }) => {
   const activeSources = useMemo(
     () => sources
       .filter((source) => source.enabled)
-      .flatMap((source) => resolveReflections(reflections.current, orientation, source, walls)),
-    [sources, walls, orientation]
+      .flatMap((source) => resolveReflections(reflections.current, source, walls)),
+    [sources, walls]
   );
 
   const map = useMemo(
@@ -119,17 +132,14 @@ function computeGainMap(
 
 function resolveReflections(
   map: ReflectionMap,
-  orientation: Orientation,
   source: Source,
-  walls: Guide[],
+  walls: Line[],
 ): Source[] {
   map.has(source) || map.set(source, new Map());
-  const reflections: Map<Guide, Source> = map.get(source)!;
+  const reflections: Map<Line, Source> = map.get(source)!;
 
   for (const wall of walls) {
-    if (!reflections.has(wall)) {
-      reflections.set(wall, reflect(source, wall, orientation));
-    }
+    reflections.set(wall, reflect(source, wall));
   }
 
   for (const wall of reflections.keys()) {
@@ -141,7 +151,7 @@ function resolveReflections(
   return [source, ...reflections.values()];
 }
 
-function reflect(source: Source, wall: Guide, orientation: Orientation): Source {
+function reflect(source: Source, wall: Line): Source {
   const angle = -rad(wall.angle.value);
   const a = Math.sin(angle);
   const b = Math.cos(angle);
@@ -152,12 +162,15 @@ function reflect(source: Source, wall: Guide, orientation: Orientation): Source 
   const b2 = b ** 2;
   const x = (p * (a2 - b2) - 2 * b * (a * q + c)) / (a2 + b2);
   const y = (q * (b2 - a2) - 2 * a * (b * p + c)) / (a2 + b2);
+  const absorption = wall.absorption.value >= 0 ? 1 - wall.absorption.value : dbToGain(wall.absorption.value);
+  const gain = dbToGain(source.gain.value);
 
   return {
     ...source,
     x: { value: x, source: '' },
     y: { value: y, source: '' },
     angle: { value: -source.angle.value + 2 * wall.angle.value, source: '' },
+    gain: { value: gainToDb(gain * absorption), source: '' },
   };
 }
 

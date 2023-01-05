@@ -1,11 +1,19 @@
-import { createContext, Dispatch, FC, useContext, useReducer } from 'react';
+import { createContext, Dispatch, FC, useContext, useMemo, useReducer } from 'react';
 import { Children } from '../types';
 import { Action } from './actions';
 import { dispatchAction, manager } from './reducer';
-import { AreaConfig, Guide, Project, SimulationOptions, Source, VariableMap } from './types';
+import {
+  AreaConfig,
+  Guide,
+  Project,
+  ProjectInfo,
+  SimulationOptions,
+  Source,
+  VariableMap,
+} from './types';
 
 const Dispatch = createContext<Dispatch<Action>>(undefined as any);
-const ProjectName = createContext<string>(undefined as any);
+const ProjectInfo = createContext<ProjectInfo>(undefined as any);
 const ProjectList = createContext<Project[]>(undefined as any);
 const Area = createContext<AreaConfig>(undefined as any);
 const Sim = createContext<SimulationOptions>(undefined as any);
@@ -18,8 +26,8 @@ export function useDispatch(): Dispatch<Action> {
   return useContext(Dispatch);
 }
 
-export function useProjectName(): string {
-  return useContext(ProjectName);
+export function useProjectInfo(): ProjectInfo {
+  return useContext(ProjectInfo);
 }
 
 export function useProjectList(): Project[] {
@@ -52,10 +60,16 @@ export function useGlobals(): VariableMap {
 
 export const StateProvider: FC<Children> = ({ children }) => {
   const [project, dispatch] = useReducer(dispatchAction, undefined, () => manager.loadLast());
+  const info = useMemo(() => ({
+    id: project.id,
+    name: project.name,
+    created: project.created,
+    lastModified: project.lastModified,
+  }), [project.id, project.name, project.created, project.lastModified]);
 
   return (
     <Dispatch.Provider value={dispatch}>
-      <ProjectName.Provider value={project.name}>
+      <ProjectInfo.Provider value={info}>
         <ProjectList.Provider value={manager.getList()}>
           <Area.Provider value={project.area}>
             <Sim.Provider value={project.simulation}>
@@ -71,7 +85,7 @@ export const StateProvider: FC<Children> = ({ children }) => {
             </Sim.Provider>
           </Area.Provider>
         </ProjectList.Provider>
-      </ProjectName.Provider>
+      </ProjectInfo.Provider>
     </Dispatch.Provider>
   );
 };

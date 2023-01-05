@@ -1,5 +1,6 @@
 [
   {
+    "id": "examples/1-sub-per-side",
     "name": "1 sub per side",
     "created": "2023-01-05T01:55:00.000Z",
     "lastModified": "2023-01-05T01:55:00.000Z",
@@ -50,6 +51,7 @@
     }
   },
   {
+    "id": "examples/center-cluster",
     "name": "center cluster",
     "created": "2023-01-05T01:54:00.000Z",
     "lastModified": "2023-01-05T01:54:00.000Z",
@@ -97,6 +99,7 @@
     "variables": { "spacing": { "min": 0, "max": 10, "value": 0 } }
   },
   {
+    "id": "examples/2-element-cardioid",
     "name": "2-element cardioid",
     "created": "2023-01-05T01:53:00.000Z",
     "lastModified": "2023-01-05T01:53:00.000Z",
@@ -144,6 +147,7 @@
     "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
   },
   {
+    "id": "examples/2-element-end-fire",
     "name": "2-element end-fire",
     "created": "2023-01-05T01:52:00.000Z",
     "lastModified": "2023-01-05T01:52:00.000Z",
@@ -191,6 +195,7 @@
     "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
   },
   {
+    "id": "examples/horizontal-cardioid-stack",
     "name": "horizontal cardioid stack",
     "created": "2023-01-05T01:51:00.000Z",
     "lastModified": "2023-01-05T01:51:00.000Z",
@@ -248,5 +253,49 @@
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
     "variables": { }
+  },
+  {
+    "id": "examples/sub-in-corner",
+    "name": "sub in corner",
+    "created": "2023-01-05T01:50:00.000Z",
+    "lastModified": "2023-01-05T01:50:00.000Z",
+    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
+    "simulation": { "frequency": 60, "resolution": 4 },
+    "sources": [
+      {
+        "x": { "source": "x + 5", "value": 5 },
+        "y": { "source": "y + 5", "value": 5 },
+        "angle": { "source": "0", "value": 0 },
+        "width": { "source": "1", "value": 1 },
+        "depth": { "source": "0.6", "value": 0.6 },
+        "delay": { "source": "0", "value": 0 },
+        "gain": { "source": "0", "value": 0 },
+        "invert": false,
+        "model": "omni",
+        "enabled": true
+      }
+    ],
+    "guides": [
+      {
+        "kind": "line",
+        "x": { "source": "4.5", "value": 4.5 },
+        "y": { "source": "0", "value": 0 },
+        "angle": { "source": "0", "value": 0 },
+        "reflect": true,
+        "absorption": { "source": "0", "value": 0 },
+        "color": "#000"
+      },
+      {
+        "kind": "line",
+        "x": { "source": "0", "value": 0 },
+        "y": { "source": "4.5", "value": 4.5 },
+        "angle": { "source": "90", "value": 90 },
+        "reflect": true,
+        "absorption": { "source": "0", "value": 0 },
+        "color": "#000"
+      }
+    ],
+    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "variables": { "x": { "min": 0, "max": 50, "value": 0 }, "y": { "min": 0, "max": 50, "value": 0 } }
   }
 ]

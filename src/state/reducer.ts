@@ -17,9 +17,10 @@ globals.functions.set('dt', function dt(dist: number) { return 1000 * dist / thi
 export function dispatchAction(project: Project, action: Action): Project {
   switch (action.type) {
     case 'create-project': return manager.create();
-    case 'save-project': return saveProject(project, action.name);
-    case 'load-project': return manager.load(action.name);
-    case 'delete-project': return deleteProject(project, action.name);
+    case 'set-project-name': return setProjectName(project, action.name);
+    case 'save-project': return saveProject(project);
+    case 'load-project': return manager.load(action.id);
+    case 'delete-project': return deleteProject(project, action.id);
     case 'set-opt': return setOption(project, action);
     case 'add-src': return addSource(project);
     case 'add-guide': return addGuide(project, action.kind);
@@ -33,15 +34,18 @@ export function dispatchAction(project: Project, action: Action): Project {
   }
 }
 
-function saveProject(project: Project, name: string): Project {
-  project.name = name;
+function setProjectName(project: Project, name: string): Project {
+  return { ...project, name };
+}
+
+function saveProject(project: Project): Project {
   project.lastModified = new Date();
   manager.save(project);
   return { ...project };
 }
 
-function deleteProject(project: Project, name: string): Project {
-  manager.delete(name);
+function deleteProject(project: Project, id: string): Project {
+  manager.delete(id);
   return { ...project };
 }
 
@@ -72,16 +76,14 @@ function addSource(project: Project): Project {
 function addGuide(project: Project, kind: 'rect' | 'line'): Project {
   const common = {
     [$id]: manager.nextId(),
-    x: expr(0),
-    y: expr(-3),
     angle: expr(0),
     color: '#000',
   };
 
   project.guides = project.guides.concat(
     kind === 'rect'
-      ? { ...common, kind, width: expr(10), height: expr(6) }
-      : { ...common, kind, reflect: false }
+      ? { ...common, kind, x: expr(0), y: expr(-3), width: expr(10), height: expr(6) }
+      : { ...common, kind, x: expr(-10), y: expr(0), reflect: false, absorption: expr(0) }
   );
 
   return { ...project };
@@ -207,7 +209,7 @@ function checkDependencies(project: Project, variable: string): Project {
   const guides = project.guides.map((src) => {
     let ch = false;
 
-    for (const prop of ['x', 'y', 'angle', 'width', 'height']) {
+    for (const prop of ['x', 'y', 'angle', 'width', 'height', 'absorption']) {
       if (src[prop] && src[prop][$vars].includes(variable) && solve(src[prop])) {
         ch2 = ch = true;
       }

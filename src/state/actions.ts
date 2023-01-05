@@ -4,19 +4,23 @@ export type CreateProjectAction = {
   type: 'create-project';
 };
 
+export type SetProjectNameAction = {
+  type: 'set-project-name';
+  name: string;
+};
+
 export type SaveProjectAction = {
   type: 'save-project';
-  name: string;
 };
 
 export type LoadProjectAction = {
   type: 'load-project';
-  name: string;
+  id: string;
 };
 
 export type DeleteProjectAction = {
   type: 'delete-project';
-  name: string;
+  id: string;
 };
 
 export type OptionKind = 'area' | 'simulation';
@@ -92,6 +96,7 @@ export type DeleteVariableAction = {
 
 export type Action =
   | CreateProjectAction
+  | SetProjectNameAction
   | SaveProjectAction
   | LoadProjectAction
   | DeleteProjectAction
@@ -110,14 +115,17 @@ export const proj = {
   create(): CreateProjectAction {
     return { type: 'create-project' };
   },
-  save(name: string): SaveProjectAction {
-    return { type: 'save-project', name };
+  setName(name: string): SetProjectNameAction {
+    return { type: 'set-project-name', name };
   },
-  load(name: string): LoadProjectAction {
-    return { type: 'load-project', name };
+  save(): SaveProjectAction {
+    return { type: 'save-project' };
   },
-  del(name: string): DeleteProjectAction {
-    return { type: 'delete-project', name };
+  load(id: string): LoadProjectAction {
+    return { type: 'load-project', id };
+  },
+  del(id: string): DeleteProjectAction {
+    return { type: 'delete-project', id };
   },
 };
 

@@ -184,6 +184,16 @@
               in outdoors settings, where you may have just a building on one side
               or something similar) should be useful info.
             </dd>
+            <dt>absorption</dt>
+            <dd>
+              When a line guide has reflections enabled, this parameter adjusts the
+              initial gain of the generated reflected sources. A value <code>&lt;0</code>
+              will be interpreted as attenuation in dB; a value <code>&gt;=0</code> will be
+              interpreted as an absorption coefficient the way it is usually specified
+              for materials, i.e. ratio of the absorbed energy to the incident energy.
+              A coefficient of <code>0</code> means no absorption, while a coefficient
+              of <code>1</code> means total absorption.
+            </dd>
             <dt>color, label</dt>
             <dd>The color and label of the guide.</dd>
           </dl>
