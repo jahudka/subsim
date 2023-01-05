@@ -3,7 +3,7 @@ import { Expression } from './expression';
 import { Node } from './node';
 
 export class Negation extends Node {
-  private readonly value: Expression;
+  public readonly value: Expression;
 
   constructor(position: number, value: Expression) {
     super(position);

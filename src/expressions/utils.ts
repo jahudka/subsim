@@ -1,4 +1,4 @@
-import { ArithmeticExpression, Expression, FunctionCall, Variable } from './ast';
+import { ArithmeticExpression, Expression, FunctionCall, Negation, Variable } from './ast';
 
 export function extractVariables(expression: Expression): string[] {
   const variables: Set<string> = new Set();
@@ -12,6 +12,8 @@ export function extractVariables(expression: Expression): string[] {
       queue.push(expr.left, expr.right);
     } else if (expr instanceof FunctionCall) {
       queue.push(...expr.args);
+    } else if (expr instanceof Negation) {
+      queue.push(expr.value);
     }
   }
 
