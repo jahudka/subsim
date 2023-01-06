@@ -1,4 +1,4 @@
-import { Expression } from '../expressions';
+import type { Expression } from '../expressions';
 
 export const $id = Symbol('$id');
 export const $expr = Symbol('$expr');
@@ -30,11 +30,6 @@ export type SimulationOptions = {
 
 export type SourceModel = {
   (angle: number): number;
-};
-
-export const models: Record<string, SourceModel> = {
-  omni: () => 1,
-  cardioid: (a) => (1 - Math.cos(a)) / 2,
 };
 
 export type Source = {

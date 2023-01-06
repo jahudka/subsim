@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import { Source, useSources } from '../state';
-import { adjustRotation, rotate, swapAxes, useUiPrimitives } from './utils';
+import { useUiPrimitives } from './ui-utils';
+import { adjustRotation, rotate, swapAxes } from './utils';
 
 export const PlotSourcesUI: FC = () => {
   const { orientation, scale, x0, y0, w, h, ref } = useUiPrimitives();

@@ -1,6 +1,8 @@
 import { FC, useEffect } from 'react';
-import { GainMap, useGainMap } from './gainMap';
-import { color, useUiPrimitives } from './utils';
+import { useGainMap } from './gainMap';
+import { GainMap } from './types';
+import { useUiPrimitives } from './ui-utils';
+import { color } from './utils';
 
 export const PlotSources: FC = () => {
   const { orientation, resolution, w, h, ref } = useUiPrimitives();

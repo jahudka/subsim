@@ -1,6 +1,7 @@
 import { FC, MouseEvent } from 'react';
-import { GainMap, useGainMap } from './gainMap';
-import { useUiPrimitives } from './utils';
+import { useGainMap } from './gainMap';
+import { GainMap } from './types';
+import { useUiPrimitives } from './ui-utils';
 
 export const Tooltip: FC = () => {
   const { w, h, resolution } = useUiPrimitives();
