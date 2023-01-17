@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback } from 'react';
-import { useDerivedState } from '../../hooks';
+import { useCurrent, useDerivedState } from '../../hooks';
 
 export type FieldState = {
   value: string;
@@ -23,18 +23,28 @@ export function useField<T>(
   { factory = defaultFactory, validate }: FieldOptions<T> = {} as FieldOptions<T>,
 ): [FieldState, FieldChangeHandler] {
   const [state, setState] = useDerivedState(factory, value);
+  const onChangeFn = useCurrent(onChange);
+  const factoryFn = useCurrent(factory);
+  const validateFn = useCurrent(validate);
+  const initialVal = useCurrent(value);
 
   const handleChange: FieldChangeHandler = useCallback((evt) => {
-    if (onChange) {
+    if (onChangeFn.current) {
       try {
-        onChange(validate ? validate(evt.target) : evt.target.value as T);
+        const value = validateFn.current ? validateFn.current(evt.target) : evt.target.value as T;
+
+        if (value === initialVal.current) {
+          setState({ value: evt.target.value });
+        } else {
+          onChangeFn.current(value);
+        }
       } catch (e) {
         setState({ value: evt.target.value, error: e.message });
       }
     } else {
       setState({ value: evt.target.value });
     }
-  }, [onChange, validate, setState]);
+  }, [onChangeFn, factoryFn, validateFn, setState, initialVal]);
 
   return [state, handleChange];
 }

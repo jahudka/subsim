@@ -25,28 +25,32 @@ const arrivalMap: ArrivalMap = new Map();
 let sources: Source[] = [];
 let gfx: GfxOptions | undefined = undefined;
 let sim: SimulationOptions | undefined = undefined;
+let tmr: number | undefined = undefined;
 
-self.addEventListener('message', (evt) => {
-  if (evt.data.action === 'set-options') {
-    if (evt.data.gfx) {
-      gfx = evt.data.gfx;
-      reflectionMap.clear();
-      arrivalMap.clear();
-    }
-
-    if (evt.data.elements) {
-      sources = evt.data.elements.sources
-        .filter((source: Source) => source.enabled)
-        .flatMap((source: Source) => resolveReflections(source, evt.data.elements.walls));
-    }
-
-    if (!sim || evt.data.simulation.$c !== sim.$c) {
-      arrivalMap.clear();
-    }
-
-    sim = evt.data.simulation;
-    self.postMessage({ map: computeGainMap() });
+self.addEventListener('message', async (evt) => {
+  if (evt.data.action !== 'set-options') {
+    return;
   }
+
+  if (evt.data.gfx) {
+    gfx = evt.data.gfx;
+    reflectionMap.clear();
+    arrivalMap.clear();
+  }
+
+  if (evt.data.elements) {
+    sources = evt.data.elements.sources
+      .filter((source: Source) => source.enabled)
+      .flatMap((source: Source) => resolveReflections(source, evt.data.elements.walls));
+  }
+
+  if (!sim || evt.data.simulation.$c !== sim.$c) {
+    arrivalMap.clear();
+  }
+
+  sim = evt.data.simulation;
+  tmr !== undefined && clearTimeout(tmr);
+  tmr = setTimeout(() => self.postMessage({ map: computeGainMap() }));
 });
 
 function computeGainMap(): GainMap | undefined {

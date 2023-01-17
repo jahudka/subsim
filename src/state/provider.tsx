@@ -1,7 +1,7 @@
 import { createContext, Dispatch, FC, useContext, useMemo, useReducer } from 'react';
 import { Children } from '../types';
 import { Action } from './actions';
-import { dispatchAction, manager } from './reducer';
+import { dispatchAction, getProjectList, loadLastProject } from './reducer';
 import {
   AreaConfig,
   Guide,
@@ -59,7 +59,7 @@ export function useGlobals(): VariableMap {
 }
 
 export const StateProvider: FC<Children> = ({ children }) => {
-  const [project, dispatch] = useReducer(dispatchAction, undefined, () => manager.loadLast());
+  const [project, dispatch] = useReducer(dispatchAction, undefined, loadLastProject);
   const info = useMemo(() => ({
     id: project.id,
     name: project.name,
@@ -70,7 +70,7 @@ export const StateProvider: FC<Children> = ({ children }) => {
   return (
     <Dispatch.Provider value={dispatch}>
       <ProjectInfo.Provider value={info}>
-        <ProjectList.Provider value={manager.getList()}>
+        <ProjectList.Provider value={getProjectList()}>
           <Area.Provider value={project.area}>
             <Sim.Provider value={project.simulation}>
               <Sources.Provider value={project.sources}>

@@ -6,8 +6,7 @@ import { $expr, $id, $vars, ExpressionProperty, Line, Project, Rect, Source } fr
 const parser = new Parser();
 const globals = new GlobalContext();
 const ctx = new Context(globals);
-
-export const manager = new ProjectManager(parser);
+const manager = new ProjectManager(parser);
 
 globals.variables.set('$c', 343);
 globals.functions.set('qw', function qw(freq: number) { return 0.25 * this.get('$c') / freq; });
@@ -16,10 +15,10 @@ globals.functions.set('dt', function dt(dist: number) { return 1000 * dist / thi
 
 export function dispatchAction(project: Project, action: Action): Project {
   switch (action.type) {
-    case 'create-project': return manager.create();
+    case 'create-project': return createProject();
     case 'set-project-name': return setProjectName(project, action.name);
     case 'save-project': return saveProject(project);
-    case 'load-project': return manager.load(action.id);
+    case 'load-project': return loadProject(action.id);
     case 'delete-project': return deleteProject(project, action.id);
     case 'set-opt': return setOption(project, action);
     case 'add-src': return addSource(project);
@@ -34,6 +33,18 @@ export function dispatchAction(project: Project, action: Action): Project {
   }
 }
 
+export function getProjectList(): Project[] {
+  return manager.getList();
+}
+
+export function loadLastProject(): Project {
+  return loadProjectVariables(manager.loadLast());
+}
+
+function createProject(): Project {
+  return loadProjectVariables(manager.create());
+}
+
 function setProjectName(project: Project, name: string): Project {
   return { ...project, name };
 }
@@ -44,14 +55,33 @@ function saveProject(project: Project): Project {
   return { ...project };
 }
 
+function loadProject(id: string): Project {
+  return loadProjectVariables(manager.load(id));
+}
+
+function loadProjectVariables(project: Project): Project {
+  for (const [key, store] of [['globals', globals.variables], ['variables', ctx.variables]] as const) {
+    store.clear();
+
+    for (const [variable, { value }] of Object.entries(project[key])) {
+      store.set(variable, value);
+    }
+  }
+
+  return project;
+}
+
 function deleteProject(project: Project, id: string): Project {
   manager.delete(id);
   return { ...project };
 }
 
 function setOption(project: Project, action: SetOptionAction): Project {
-  project[action.kind][action.option] = action.value;
-  project[action.kind] = { ...project[action.kind] } as any;
+  project[action.kind] = {
+    ...project[action.kind],
+    [action.option]: action.value
+  };
+
   return { ...project };
 }
 

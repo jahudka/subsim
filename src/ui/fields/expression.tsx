@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC, FocusEvent, ReactNode, useCallback } from 'react';
 import Editor from 'react-simple-code-editor';
 import {
   T_IDENTIFIER,
@@ -18,16 +18,21 @@ export type ExpressionFieldProps = Children & {
 };
 
 export const ExpressionField: FC<ExpressionFieldProps> = ({ id, state, onChange, className, children }) => {
+  const update = useCallback((value: string) => onChange(value.replace(/\n+/, '')), [onChange]);
   const value = Number.isNaN(state.value) ? '?' : state.value.toFixed(2).replace(/\.?0+$/, '');
 
   return (
     <Field type="expression" className={className} error={state.error} addon={children}>
-      <Editor textareaId={id} onValueChange={onChange} highlight={highlight} value={state.source} ignoreTabKey />
+      <Editor textareaId={id} onFocus={handleFocus} onValueChange={update} highlight={highlight} value={state.source} ignoreTabKey />
       <span className="field-tooltip field-expression-source">{highlight(state.source)}</span>
       <span className="field-tooltip field-expression-value">{value}</span>
     </Field>
   );
 };
+
+function handleFocus(evt: FocusEvent<HTMLTextAreaElement | any>): void {
+  setTimeout(() => evt.target.select());
+}
 
 function highlight(source: string): ReactNode {
   return tokenize(source, false).map((token, i) => {
