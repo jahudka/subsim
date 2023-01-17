@@ -42,10 +42,10 @@
             The simulator runs in 2D only and the simulation area represents
             a birds-eye view of an open field, that is, there are no walls
             which would generate reflections in the real world (although there
-            is a tool which can add walls, to some extent - see below). There
-            is also no attempt to simulate things like the speed of sound
-            changing based on weather conditions (although you can adjust it
-            manually if you're so inclined). Like I said, <i>bare-bones</i>.
+            is a tool which can add walls, to some extent - we'll get back to
+            that). There is also no attempt to simulate things like the speed
+            of sound changing based on weather conditions (although you can
+            adjust it manually if you're so inclined). Like I said, <i>bare-bones</i>.
           </p>
           <p>
             The simulation is always run at one defined frequency, which you can
@@ -58,12 +58,17 @@
             the signals to produce the resulting gain factor and picking a suitable
             color.
           </p>
-          <h3>Examples</h3>
+          <h3>Projects</h3>
           <p>
             Click the V-shaped button at the top of the page to open the Project
             menu; there is a number of predefined example projects you can check
             out. Some are parametric - they have some parameters set using variables
             that you can change in the <i>Variables</i> section.
+          </p>
+          <p>
+            You can also create your own projects. They will be saved in your browser
+            for later use, but beware that there is no autosave function - remember
+            to hit that "Save" button when you're happy with your settings!
           </p>
         </div>
         <div class="col">
@@ -89,11 +94,15 @@
               Expressions can contain <i>variables</i>, like <code>$c</code> for the speed
               of sound, but you can also define your own variables. There is also a number
               of <i>functions</i> you can call in expressions - see below for a reference.
-              This allows you to e.g. define a frequency for which you're tuning your array
-              as a variable and then specify all the spatial offsets and time delays of
-              your sources as a function of that frequency - meaning that if you want to
+              This allows you to e.g. define a variable representing the frequency for which
+              you're tuning your array and then specify all the spatial offsets and time delays
+              of your sources as a function of that frequency - meaning that if you want to
               try a different frequency, you just adjust that one variable, and your entire
-              array will reconfigure automatically.
+              array will reconfigure automatically. All the numeric parameters will by default
+              show their computed numeric values; you can hover over parameters to show a tooltip
+              with the original expressions. This will switch while you're editing a parameter:
+              the parameter field will then contain the expression, and the tooltip will show
+              the computed value.
             </dd>
           </dl>
         </div>
