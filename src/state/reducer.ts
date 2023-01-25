@@ -1,7 +1,8 @@
 import { Context, extractVariables, GlobalContext, Literal, Parser } from '../expressions';
+import { $expr, $id, $vars } from '../utils';
 import { Action, GuideProperty, PropertyValue, SetOptionAction, SourceProperty } from './actions';
 import { ProjectManager } from './manager';
-import { $expr, $id, $vars, ExpressionProperty, Line, Project, Rect, Source } from './types';
+import { ExpressionProperty, Line, Project, Rect, Source } from './types';
 
 const parser = new Parser();
 const globals = new GlobalContext();

@@ -1,6 +1,5 @@
 import { Dispatch, FC } from 'react';
 import {
-  $id,
   Action,
   add,
   del,
@@ -9,6 +8,7 @@ import {
   useDispatch,
   useSources,
 } from '../state';
+import { $id } from '../utils';
 import { BooleanField, ExpressionField, ListField } from './fields';
 
 export const SourcesUI: FC = () => {
@@ -64,16 +64,16 @@ const models: string[] = [
 const SourceUI: FC<SourceUIProps> = ({ idx, source, dispatch }) => (
   <tr>
     <th>{idx+1}</th>
-    <td><BooleanField value={source.enabled} onChange={(enabled) => dispatch(set.src(source[$id], 'enabled', enabled))} /></td>
-    <td><ExpressionField state={source.x} onChange={(x) => dispatch(set.src(source[$id], 'x', x))} /></td>
-    <td><ExpressionField state={source.y} onChange={(y) => dispatch(set.src(source[$id], 'y', y))} /></td>
-    <td><ExpressionField state={source.angle} onChange={(angle) => dispatch(set.src(source[$id], 'angle', angle))} /></td>
-    <td><ExpressionField state={source.width} onChange={(width) => dispatch(set.src(source[$id], 'width', width))} /></td>
-    <td><ExpressionField state={source.depth} onChange={(depth) => dispatch(set.src(source[$id], 'depth', depth))} /></td>
-    <td><ExpressionField state={source.delay} onChange={(delay) => dispatch(set.src(source[$id], 'delay', delay))} /></td>
-    <td><ExpressionField state={source.gain} onChange={(gain) => dispatch(set.src(source[$id], 'gain', gain))} /></td>
-    <td><BooleanField value={source.invert} onChange={(invert) => dispatch(set.src(source[$id], 'invert', invert))} /></td>
-    <td><ListField options={models} value={source.model} onChange={(model) => dispatch(set.src(source[$id], 'model', model))} /></td>
-    <td className="text-right"><button className="btn btn-delete" onClick={() => dispatch(del.src(source[$id]))}></button></td>
+    <td><BooleanField value={source.enabled} onChange={(enabled) => dispatch(set.src(source, 'enabled', enabled))} /></td>
+    <td><ExpressionField state={source.x} onChange={(x) => dispatch(set.src(source, 'x', x))} /></td>
+    <td><ExpressionField state={source.y} onChange={(y) => dispatch(set.src(source, 'y', y))} /></td>
+    <td><ExpressionField state={source.angle} onChange={(angle) => dispatch(set.src(source, 'angle', angle))} /></td>
+    <td><ExpressionField state={source.width} onChange={(width) => dispatch(set.src(source, 'width', width))} /></td>
+    <td><ExpressionField state={source.depth} onChange={(depth) => dispatch(set.src(source, 'depth', depth))} /></td>
+    <td><ExpressionField state={source.delay} onChange={(delay) => dispatch(set.src(source, 'delay', delay))} /></td>
+    <td><ExpressionField state={source.gain} onChange={(gain) => dispatch(set.src(source, 'gain', gain))} /></td>
+    <td><BooleanField value={source.invert} onChange={(invert) => dispatch(set.src(source, 'invert', invert))} /></td>
+    <td><ListField options={models} value={source.model} onChange={(model) => dispatch(set.src(source, 'model', model))} /></td>
+    <td className="text-right"><button className="btn btn-delete" onClick={() => dispatch(del.src(source))}></button></td>
   </tr>
 );

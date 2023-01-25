@@ -4,8 +4,10 @@ import type {
   ArrivalMap,
   ArrivalMapX,
   ArrivalMapY,
+  ArrivalPoint,
   GainMap,
   GfxOptions,
+  Point,
   ReflectionMap,
 } from './types';
 import { adjustRotation, dbToGain, distance, gainToDb, swapAxes } from './utils';
@@ -22,6 +24,7 @@ const models: Record<string, SourceModel> = {
 
 const reflectionMap: ReflectionMap = new Map();
 const arrivalMap: ArrivalMap = new Map();
+const sourceCache: Map<string, Source> = new Map();
 let sources: Source[] = [];
 let gfx: GfxOptions | undefined = undefined;
 let sim: SimulationOptions | undefined = undefined;
@@ -41,7 +44,7 @@ self.addEventListener('message', async (evt) => {
   if (evt.data.elements) {
     sources = evt.data.elements.sources
       .filter((source: Source) => source.enabled)
-      .flatMap((source: Source) => resolveReflections(source, evt.data.elements.walls));
+      .flatMap((source: Source) => resolveReflections(resolveSource(source), evt.data.elements.walls));
   }
 
   if (!sim || evt.data.simulation.$c !== sim.$c) {
@@ -63,18 +66,24 @@ function computeGainMap(): GainMap | undefined {
   const map: GainMap = new Map();
 
   for (let x = resolution / 2; x <= w - resolution / 2; x += resolution) {
-    const xmap: Map<number, number> = new Map();
+    const xmap: Map<number, Point> = new Map();
 
     for (let y = resolution / 2; y <= h - resolution / 2; y += resolution) {
+      const arrivals: ArrivalPoint[] = [];
+
       // This amazing algorithm was derived from https://ccrma.stanford.edu/~jos/filters/Proof_Using_Trigonometry.html
       // 'ac' and 'as' are 'x' and 'y' - the sums of cosines and sines of each wave's phase multiplied by its gain
       const [ac, as] = sources.reduce(([ac, as], s) => {
         const b = getArrivals(s, orientation, resolution, scale, $c, w, h, x0, y0).get(x)!.get(y)!;
         const p = 2 * Math.PI * (frequency * (s.delay.value / 1000 + b.delay) + (s.invert ? 0.5 : 0));
+        arrivals.push(b);
         return [ac + b.gain * Math.cos(p), as + b.gain * Math.sin(p)];
       }, [0, 0]);
 
-      xmap.set(y, gainToDb(Math.sqrt(ac ** 2 + as ** 2)));
+      xmap.set(y, {
+        gain: gainToDb(Math.sqrt(ac ** 2 + as ** 2)),
+        arrivals: normalizeArrivals(arrivals),
+      });
     }
 
     map.set(x, xmap);
@@ -178,4 +187,40 @@ function getArrivals(
 
   arrivalMap.set(source, xMap);
   return xMap;
+}
+
+function resolveSource(source: Source): Source {
+  const data: (string | number)[] = [
+    source.x.value,
+    source.y.value,
+    source.angle.value,
+    source.width.value,
+    source.depth.value,
+    source.delay.value,
+    source.gain.value,
+    Number(source.invert),
+    source.model,
+  ];
+
+  const id = data.join('\0');
+  const existing = sourceCache.get(id);
+
+  if (!existing) {
+    sourceCache.set(id, source);
+    return source;
+  } else {
+    return existing;
+  }
+}
+
+function normalizeArrivals(arrivals: ArrivalPoint[]): ArrivalPoint[] {
+  const [t0, maxGain] = arrivals.reduce(
+    ([t, g], p) => [Math.min(t, p.delay), Math.max(g, p.gain)],
+    [Infinity, -Infinity],
+  );
+
+  return arrivals.map((p) => ({
+    delay: p.delay - t0,
+    gain: gainToDb(p.gain / maxGain),
+  }));
 }

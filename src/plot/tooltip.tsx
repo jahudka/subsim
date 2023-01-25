@@ -24,7 +24,7 @@ function renderTooltip(
 
   ctx.clearRect(0, 0, w, h);
   ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
+  ctx.textBaseline = 'bottom';
 
   if (!map) {
     return;
@@ -35,14 +35,38 @@ function renderTooltip(
   const cy = evt.clientY - top;
   const x = Math.round((cx - resolution / 2) / resolution) * resolution + resolution / 2;
   const y = h - Math.round((cy - resolution / 2) / resolution) * resolution + resolution / 2;
-  const gain = map.get(x)?.get(y);
+  const point = map.get(x)?.get(y);
 
-  if (gain !== undefined) {
-    const tx = Math.max(30, Math.min(w - 30, cx));
-    const ty = cy + (cy < 30 ? 25 : -15);
+  if (point !== undefined) {
+    const tw = 46;
+    const th = 32;
+    const margin = 5;
+    const padding = 3;
+    const tx = Math.max(margin + tw / 2, Math.min(w - margin - tw / 2, cx));
+    const ty = cy + (cy < th + 2 * margin ? margin + 15 + th / 2 : -(margin + th / 2));
+    const delayRange = 0.12;
+    const gainRange = -36;
+    const arrw = tw - 2 * padding;
+    const arrh = th / 2 - 2 * padding;
+
     ctx.fillStyle = '#ffffffaa';
-    ctx.fillRect(tx - 23, ty - 8, 46, 16);
+    ctx.fillRect(tx - tw / 2, ty - th / 2, tw, th);
     ctx.fillStyle = '#000';
-    ctx.fillText(`${gain.toFixed(1)} dB`, tx, ty);
+    ctx.fillText(`${point.gain.toFixed(1)} dB`, tx, ty);
+
+    for (const ap of point.arrivals) {
+      if (ap.delay > delayRange || ap.gain < gainRange) {
+        continue;
+      }
+
+      const ah = 1 - (ap.gain / gainRange);
+
+      ctx.fillRect(
+        tx - arrw / 2 + (ap.delay / delayRange) * arrw,
+        ty + padding + (1 - ah) * arrh,
+        1,
+        ah * arrh,
+      );
+    }
   }
 }

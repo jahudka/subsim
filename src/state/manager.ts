@@ -1,6 +1,7 @@
 import { extractVariables, Parser } from '../expressions';
+import { $expr, $id, $vars } from '../utils';
 import { migrate } from './migrations';
-import { $expr, $id, $vars, ExpressionProperty, Project } from './types';
+import { ExpressionProperty, Project } from './types';
 import examples from './examples.json';
 import { randomString, safeDeepClone } from './utils';
 

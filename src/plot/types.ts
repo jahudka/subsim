@@ -20,10 +20,15 @@ export type ArrivalPoint = {
   delay: number;
 };
 
+export type Point = {
+  gain: number;
+  arrivals: ArrivalPoint[];
+};
+
 export type ArrivalMapY = Map<number, ArrivalPoint>;
 export type ArrivalMapX = Map<number, ArrivalMapY>;
 export type ArrivalMap = Map<Source, ArrivalMapX>;
 
 export type ReflectionMap = Map<Source, Map<Line, Source>>;
 
-export type GainMap = Map<number, Map<number, number>>;
+export type GainMap = Map<number, Map<number, Point>>;

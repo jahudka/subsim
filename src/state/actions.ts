@@ -1,4 +1,5 @@
-import { ExpressionProperty, Line, Project, Rect, Source } from './types';
+import { $id } from '../utils';
+import { ExpressionProperty, Guide, Line, Project, Rect, Source } from './types';
 
 export type CreateProjectAction = {
   type: 'create-project';
@@ -133,11 +134,11 @@ export const set = {
   opt<K extends OptionKind, O extends OptionName<K>>(kind: K, option: O, value: OptionValue<K, O>): SetOptionAction<K, O> {
     return { type: 'set-opt', kind, option, value };
   },
-  src<P extends SourceProperty>(id: number, name: P, value: PropertyValue<Source, P>): SetSourcePropertyAction<P> {
-    return { type: 'set-src', id, name, value };
+  src<P extends SourceProperty>(source: Source, name: P, value: PropertyValue<Source, P>): SetSourcePropertyAction<P> {
+    return { type: 'set-src', id: source[$id], name, value };
   },
-  guide<P extends GuideProperty>(id: number, name: P, value: PropertyValue<Rect & Line, P>): SetGuidePropertyAction<P> {
-    return { type: 'set-guide', id, name, value };
+  guide<P extends GuideProperty>(guide: Guide, name: P, value: PropertyValue<Rect & Line, P>): SetGuidePropertyAction<P> {
+    return { type: 'set-guide', id: guide[$id], name, value };
   },
   var(name: string, value: number, global?: boolean): SetVariableAction {
     return { type: 'set-var', name, value, global };
@@ -157,11 +158,11 @@ export const add = {
 };
 
 export const del = {
-  src(id: number): DeleteSourceAction {
-    return { type: 'del-src', id };
+  src(source: Source): DeleteSourceAction {
+    return { type: 'del-src', id: source[$id] };
   },
-  guide(id: number): DeleteGuideAction {
-    return { type: 'del-guide', id };
+  guide(guide: Guide): DeleteGuideAction {
+    return { type: 'del-guide', id: guide[$id] };
   },
   var(name: string, global?: boolean): DeleteVariableAction {
     return { type: 'del-var', name, global };

@@ -1,8 +1,5 @@
 import type { Expression } from '../expressions';
-
-export const $id = Symbol('$id');
-export const $expr = Symbol('$expr');
-export const $vars = Symbol('$vars');
+import { $expr, $id, $vars } from '../utils';
 
 export type ExpressionProperty = {
   source: string;

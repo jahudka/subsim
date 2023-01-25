@@ -34,7 +34,7 @@ function renderSources(
 
   for (let x = resolution / 2; x <= w - resolution / 2; x += resolution) {
     for (let y = resolution / 2; y <= h - resolution / 2; y += resolution) {
-      ctx.fillStyle = color(map.get(x)!.get(y)!);
+      ctx.fillStyle = color(map.get(x)!.get(y)!.gain);
       ctx.fillRect(x - resolution / 2, h - y - resolution / 2, resolution, resolution);
     }
   }
