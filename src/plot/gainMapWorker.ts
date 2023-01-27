@@ -25,6 +25,7 @@ const models: Record<string, SourceModel> = {
 const reflectionMap: ReflectionMap = new Map();
 const arrivalMap: ArrivalMap = new Map();
 const sourceCache: Map<string, Source> = new Map();
+const wallCache: Map<string, Line> = new Map();
 let sources: Source[] = [];
 let gfx: GfxOptions | undefined = undefined;
 let sim: SimulationOptions | undefined = undefined;
@@ -44,7 +45,10 @@ self.addEventListener('message', async (evt) => {
   if (evt.data.elements) {
     sources = evt.data.elements.sources
       .filter((source: Source) => source.enabled)
-      .flatMap((source: Source) => resolveReflections(resolveSource(source), evt.data.elements.walls));
+      .flatMap((source: Source) => resolveReflections(
+        resolveSource(source),
+        evt.data.elements.walls.map(resolveWall),
+      ));
   }
 
   if (!sim || evt.data.simulation.$c !== sim.$c) {
@@ -112,7 +116,9 @@ function resolveReflections(
   const reflections: Map<Line, Source> = reflectionMap.get(source)!;
 
   for (const wall of walls) {
-    reflections.set(wall, reflect(source, wall));
+    if (!reflections.has(wall)) {
+      reflections.set(wall, reflect(source, wall));
+    }
   }
 
   for (const wall of reflections.keys()) {
@@ -190,7 +196,7 @@ function getArrivals(
 }
 
 function resolveSource(source: Source): Source {
-  const data: (string | number)[] = [
+  return resolve(source, sourceCache, [
     source.x.value,
     source.y.value,
     source.angle.value,
@@ -200,14 +206,25 @@ function resolveSource(source: Source): Source {
     source.gain.value,
     Number(source.invert),
     source.model,
-  ];
+  ]);
+}
 
+function resolveWall(wall: Line): Line {
+  return resolve(wall, wallCache, [
+    wall.x.value,
+    wall.y.value,
+    wall.angle.value,
+    wall.absorption.value,
+  ]);
+}
+
+function resolve<T>(o: T, cache: Map<string, T>, data: (string | number)[]): T {
   const id = data.join('\0');
-  const existing = sourceCache.get(id);
+  const existing = cache.get(id);
 
   if (!existing) {
-    sourceCache.set(id, source);
-    return source;
+    cache.set(id, o);
+    return o;
   } else {
     return existing;
   }
