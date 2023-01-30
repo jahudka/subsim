@@ -2,11 +2,12 @@ import { FC, MouseEvent } from 'react';
 import { useGainMap } from './gainMap';
 import { GainMap } from './types';
 import { useUiPrimitives } from './ui-utils';
+import { gainToDb } from './utils';
 
 export const Tooltip: FC = () => {
-  const { w, h, resolution } = useUiPrimitives();
+  const { w, h, resolution, frequency } = useUiPrimitives();
   const map = useGainMap();
-  return <canvas className="plot-tooltip" width={w} height={h} onMouseMove={(evt) => renderTooltip(evt, w, h, resolution, map)} />;
+  return <canvas className="plot-tooltip" width={w} height={h} onMouseMove={(evt) => renderTooltip(evt, w, h, resolution, frequency, map)} />;
 };
 
 function renderTooltip(
@@ -14,6 +15,7 @@ function renderTooltip(
   w: number,
   h: number,
   resolution: number,
+  frequency: number,
   map?: GainMap,
 ): void {
   const ctx = evt.currentTarget.getContext('2d');
@@ -49,21 +51,23 @@ function renderTooltip(
     const arrw = tw - 2 * padding;
     const arrh = th / 2 - 2 * padding;
 
-    ctx.fillStyle = '#ffffffaa';
+    ctx.fillStyle = '#ffffffcc';
     ctx.fillRect(tx - tw / 2, ty - th / 2, tw, th);
     ctx.fillStyle = '#000';
-    ctx.fillText(`${point.gain.toFixed(1)} dB`, tx, ty);
+    ctx.fillText(`${point.gain.toFixed(1)} dB`, tx, ty - 2);
 
-    for (const ap of point.arrivals) {
-      if (ap.delay > delayRange || ap.gain < gainRange) {
+    for (const { delay, gain } of point.arrivals) {
+      const spl = gainToDb(gain);
+
+      if (delay > delayRange || spl < gainRange) {
         continue;
       }
 
-      const ah = 1 - (ap.gain / gainRange);
+      const ah = 1 - (spl / gainRange);
 
       ctx.fillRect(
-        tx - arrw / 2 + (ap.delay / delayRange) * arrw,
-        ty + padding + (1 - ah) * arrh,
+        tx - arrw / 2 + (delay / delayRange) * arrw,
+        ty + padding + (0.5 - ah / 2) * arrh,
         1,
         ah * arrh,
       );

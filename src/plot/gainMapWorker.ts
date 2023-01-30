@@ -79,9 +79,10 @@ function computeGainMap(): GainMap | undefined {
       // 'ac' and 'as' are 'x' and 'y' - the sums of cosines and sines of each wave's phase multiplied by its gain
       const [ac, as] = sources.reduce(([ac, as], s) => {
         const b = getArrivals(s, orientation, resolution, scale, $c, w, h, x0, y0).get(x)!.get(y)!;
-        const p = 2 * Math.PI * (frequency * (s.delay.value / 1000 + b.delay) + (s.invert ? 0.5 : 0));
-        arrivals.push(b);
-        return [ac + b.gain * Math.cos(p), as + b.gain * Math.sin(p)];
+        const delay = s.delay.value / 1000 + b.delay;
+        const phase = 2 * Math.PI * (frequency * delay + (s.invert ? 0.5 : 0));
+        arrivals.push({ gain: b.gain, delay });
+        return [ac + b.gain * Math.cos(phase), as + b.gain * Math.sin(phase)];
       }, [0, 0]);
 
       xmap.set(y, {
@@ -232,12 +233,14 @@ function resolve<T>(o: T, cache: Map<string, T>, data: (string | number)[]): T {
 
 function normalizeArrivals(arrivals: ArrivalPoint[]): ArrivalPoint[] {
   const [t0, maxGain] = arrivals.reduce(
-    ([t, g], p) => [Math.min(t, p.delay), Math.max(g, p.gain)],
+    ([t, g], o) => [Math.min(t, o.delay), Math.max(g, o.gain)],
     [Infinity, -Infinity],
   );
 
-  return arrivals.map((p) => ({
-    delay: p.delay - t0,
-    gain: gainToDb(p.gain / maxGain),
-  }));
+  for (const info of arrivals) {
+    info.delay -= t0;
+    info.gain /= maxGain;
+  }
+
+  return arrivals;
 }
