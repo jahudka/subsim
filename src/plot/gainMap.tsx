@@ -47,7 +47,7 @@ function getIfNotSameAsCached<T extends object>(ref: MutableRefObject<T | undefi
 }
 
 export const GainMapProvider: FC<Children> = ({ children }) => {
-  const { orientation, resolution, frequency, scale, x0, y0, w, h } = useUiPrimitives();
+  const { orientation, resolution, frequency, gain, scale, x0, y0, w, h } = useUiPrimitives();
   const { $c: { value: $c } } = useGlobals();
   const guides = useGuides();
   const walls = useMemo(() => guides.filter(isReflectingLine), [guides]);
@@ -61,11 +61,11 @@ export const GainMapProvider: FC<Children> = ({ children }) => {
   useLayoutEffect(() => {
     worker.postMessage({
       action: 'set-options',
-      simulation: { frequency, $c },
+      simulation: { frequency, gain, $c },
       gfx,
       elements,
     });
-  }, [gfx, elements, frequency, $c]);
+  }, [gfx, elements, frequency, gain, $c]);
 
   useLayoutEffect(() => {
     const handleMessage = (evt: MessageEvent) => {

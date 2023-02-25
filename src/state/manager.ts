@@ -72,6 +72,7 @@ export class ProjectManager {
       simulation: {
         frequency: 60,
         resolution: 4,
+        gain: 0,
       },
       sources: [],
       guides: [],

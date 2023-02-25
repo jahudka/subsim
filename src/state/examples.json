@@ -5,7 +5,7 @@
     "created": "2023-01-05T01:55:00.000Z",
     "lastModified": "2023-01-05T01:55:00.000Z",
     "area": { "width": 100, "depth": 60, "x0": 50, "y0": 20, "scale": 8, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "stageWidth / -2 - 0.5", "value": -4.5 },
@@ -56,7 +56,7 @@
     "created": "2023-01-05T01:54:00.000Z",
     "lastModified": "2023-01-05T01:54:00.000Z",
     "area": { "width": 100, "depth": 80, "x0": 50, "y0": 30, "scale": 8, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "-0.5 - spacing / 2", "value": -0.5 },
@@ -104,7 +104,7 @@
     "created": "2023-01-05T01:53:00.000Z",
     "lastModified": "2023-01-05T01:53:00.000Z",
     "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "0", "value": 0 },
@@ -152,7 +152,7 @@
     "created": "2023-01-05T01:52:00.000Z",
     "lastModified": "2023-01-05T01:52:00.000Z",
     "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "0", "value": 0 },
@@ -200,7 +200,7 @@
     "created": "2023-01-05T01:51:00.000Z",
     "lastModified": "2023-01-05T01:51:00.000Z",
     "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "-1", "value": -1 },
@@ -260,7 +260,7 @@
     "created": "2023-01-05T01:50:00.000Z",
     "lastModified": "2023-01-05T01:50:00.000Z",
     "area": { "width": 50, "depth": 50, "x0": 5, "y0": 5, "scale": 10, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4 },
+    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
     "sources": [
       {
         "x": { "source": "x + 5", "value": 6 },

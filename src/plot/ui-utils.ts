@@ -11,7 +11,7 @@ export type UiPrimitives = Omit<AreaConfig, 'depth'> & SimulationOptions & {
 
 export function useUiPrimitives(): UiPrimitives {
   const { orientation, scale, width: aw, depth: ad, x0: ax0, y0: ay0 } = useArea();
-  const { resolution, frequency } = useSimulation();
+  const { resolution, frequency, gain } = useSimulation();
   const ref = useRef<HTMLCanvasElement>(null);
 
   const [width, height] = swapAxes(orientation, aw, ad);
@@ -27,6 +27,7 @@ export function useUiPrimitives(): UiPrimitives {
     orientation,
     resolution,
     frequency,
+    gain,
     scale,
     width,
     height,

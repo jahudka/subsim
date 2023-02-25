@@ -23,6 +23,7 @@ export type AreaConfig = {
 export type SimulationOptions = {
   frequency: number;
   resolution: number;
+  gain: number;
 };
 
 export type SourceModel = {

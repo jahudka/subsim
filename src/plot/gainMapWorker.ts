@@ -14,6 +14,7 @@ import { adjustRotation, dbToGain, distance, gainToDb, swapAxes } from './utils'
 
 type SimulationOptions = {
   frequency: number;
+  gain: number;
   $c: number;
 };
 
@@ -66,7 +67,7 @@ function computeGainMap(): GainMap | undefined {
   }
 
   const { orientation, resolution, scale, w, h, x0, y0 } = gfx;
-  const { frequency, $c } = sim;
+  const { frequency, gain, $c } = sim;
   const map: GainMap = new Map();
 
   for (let x = resolution / 2; x <= w - resolution / 2; x += resolution) {
@@ -86,7 +87,7 @@ function computeGainMap(): GainMap | undefined {
       }, [0, 0]);
 
       xmap.set(y, {
-        gain: gainToDb(Math.sqrt(ac ** 2 + as ** 2)),
+        gain: gainToDb(Math.sqrt(ac ** 2 + as ** 2)) + gain,
         arrivals: normalizeArrivals(arrivals),
       });
     }
