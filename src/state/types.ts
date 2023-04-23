@@ -1,5 +1,5 @@
 import type { Expression } from '../expressions';
-import { $expr, $id, $vars } from '../utils';
+import { $expr, $vars } from '../utils';
 
 export type ExpressionProperty = {
   source: string;
@@ -9,21 +9,17 @@ export type ExpressionProperty = {
   error?: string;
 };
 
-export type Orientation = 'portrait' | 'landscape';
-
-export type AreaConfig = {
+export type ViewState = {
   scale: number;
-  width: number;
-  depth: number;
   x0: number;
   y0: number;
-  orientation: Orientation;
 };
 
 export type SimulationOptions = {
   frequency: number;
-  resolution: number;
   gain: number;
+  range: number;
+  step?: number;
 };
 
 export type SourceModel = {
@@ -31,7 +27,7 @@ export type SourceModel = {
 };
 
 export type Source = {
-  [$id]: number;
+  id: string;
   x: ExpressionProperty;
   y: ExpressionProperty;
   angle: ExpressionProperty;
@@ -45,7 +41,7 @@ export type Source = {
 };
 
 export type Rect = {
-  [$id]: number;
+  id: string;
   kind: 'rect';
   x: ExpressionProperty;
   y: ExpressionProperty;
@@ -57,7 +53,7 @@ export type Rect = {
 };
 
 export type Line = {
-  [$id]: number;
+  id: string;
   kind: 'line';
   x: ExpressionProperty;
   y: ExpressionProperty;
@@ -76,24 +72,46 @@ export type Variable = {
   value: number;
 };
 
-export type VariableMap = Record<string, Variable>;
-
-export type Project = {
-  id: string;
-  name: string;
-  created: Date,
-  lastModified: Date,
-  area: AreaConfig;
-  simulation: SimulationOptions;
-  sources: Source[];
-  guides: Guide[];
-  variables: VariableMap;
-  globals: VariableMap;
+export type LocalVariable = Variable & {
+  quick: boolean;
 };
 
-export type ProjectInfo = {
+export type VariableMap = Record<string, Variable>;
+export type LocalVariableMap = Record<string, LocalVariable>;
+
+export type ProjectMeta = {
   id: string;
   name: string;
   created: Date;
   lastModified: Date;
+  example?: boolean;
+};
+
+export type ProjectData = {
+  simulation: SimulationOptions;
+  sources: Source[];
+  guides: Guide[];
+  variables: LocalVariableMap;
+  globals: VariableMap;
+};
+
+export type Project = ProjectMeta & ProjectData;
+
+export type RawProjectMeta = {
+  id: string;
+  name: string;
+  created: string;
+  lastModified: string;
+  example?: boolean;
+}
+
+export type RawProject = RawProjectMeta & ProjectData;
+
+export type ProjectInfo = ProjectMeta & {
+  modified?: boolean;
+};
+
+export type ProjectState = Project & {
+  modified?: boolean;
+  view: ViewState;
 };

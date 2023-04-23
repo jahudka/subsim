@@ -1,36 +1,67 @@
+import { LocalEngine, ProxyEngine } from '../engine';
 import { Context, extractVariables, GlobalContext, Literal, Parser } from '../expressions';
-import { $expr, $id, $vars } from '../utils';
-import { Action, GuideProperty, PropertyValue, SetOptionAction, SourceProperty } from './actions';
+import { $expr, $vars } from '../utils';
+import {
+  Action,
+  GuideProperty,
+  PropertyValue,
+  SourceProperty,
+} from './actions';
 import { ProjectManager } from './manager';
-import { ExpressionProperty, Line, Project, Rect, Source } from './types';
+import {
+  ExpressionProperty,
+  Line,
+  Project,
+  ProjectState,
+  Rect,
+  SimulationOptions,
+  Source,
+} from './types';
+import { getDefaultProjectView, randomKey } from './utils';
 
 const parser = new Parser();
 const globals = new GlobalContext();
 const ctx = new Context(globals);
 const manager = new ProjectManager(parser);
 
+export const engine = ProxyEngine.isSupported()
+  ? new ProxyEngine()
+  : new LocalEngine();
+
 globals.variables.set('$c', 343);
 globals.functions.set('qw', function qw(freq: number) { return 0.25 * this.get('$c') / freq; });
 globals.functions.set('qt', function qt(freq: number) { return 250 / freq; });
 globals.functions.set('dt', function dt(dist: number) { return 1000 * dist / this.get('$c'); });
 
-export function dispatchAction(project: Project, action: Action): Project {
+export function dispatchAction(state: ProjectState, action: Action): ProjectState {
   switch (action.type) {
+    case 'set-canvas':
+      engine.setCanvas(action.canvasType, action.canvas);
+      return state;
+    case 'set-canvas-size':
+      engine.setCanvasSize(action.canvasType, action.width, action.height);
+      return state;
     case 'create-project': return createProject();
-    case 'set-project-name': return setProjectName(project, action.name);
-    case 'save-project': return saveProject(project);
+    case 'save-project': return saveProject(state, action.name, action.copy);
     case 'load-project': return loadProject(action.id);
-    case 'delete-project': return deleteProject(project, action.id);
-    case 'set-opt': return setOption(project, action);
-    case 'add-src': return addSource(project);
-    case 'add-guide': return addGuide(project, action.kind);
-    case 'set-src': return setSourceProp(project, action.id, action.name, action.value);
-    case 'set-guide': return setGuideProp(project, action.id, action.name, action.value);
-    case 'del-src': return deleteSource(project, action.id);
-    case 'del-guide': return deleteGuide(project, action.id);
-    case 'add-var': return addVar(project, action.name, action.min, action.max, action.global);
-    case 'set-var': return setVar(project, action.name, action.value, action.global);
-    case 'del-var': return delVar(project, action.name, action.global);
+    case 'reload-project': return loadProject(state.id);
+    case 'delete-project': return deleteProject(state, action.id);
+    case 'set-view': return setView(state, action.x0, action.y0, action.scale);
+    case 'reset-view': return resetView(state);
+    case 'show-context':
+      engine.renderContext(action.x, action.y);
+      return state;
+    case 'set-opt': return setOption(state, action.option, action.value);
+    case 'add-src': return addSource(state);
+    case 'set-src': return setSourceProp(state, action.id, action.name, action.value);
+    case 'del-src': return deleteSource(state, action.id);
+    case 'add-guide': return addGuide(state, action.kind);
+    case 'set-guide': return setGuideProp(state, action.id, action.name, action.value);
+    case 'del-guide': return deleteGuide(state, action.id);
+    case 'add-var': return addVar(state, action.name, action.min, action.max, action.value, action.quick, action.global);
+    case 'set-var': return setVar(state, action.name, action.value, action.global);
+    case 'del-var': return delVar(state, action.name, action.global);
+    case 'set-var-quick': return setVarQuick(state, action.name, action.quick);
   }
 }
 
@@ -38,29 +69,34 @@ export function getProjectList(): Project[] {
   return manager.getList();
 }
 
-export function loadLastProject(): Project {
-  return loadProjectVariables(manager.loadLast());
+export function loadLastProject(): ProjectState {
+  return initProject(manager.loadLast());
 }
 
-function createProject(): Project {
-  return loadProjectVariables(manager.create());
+
+
+function createProject(): ProjectState {
+  return initProject(manager.create());
 }
 
-function setProjectName(project: Project, name: string): Project {
-  return { ...project, name };
+function saveProject(state: ProjectState, name: string, copy?: boolean): ProjectState {
+  if (!copy && (state.example || (!state.modified && name === state.name))) {
+    return state;
+  }
+
+  state.name = name;
+  copy && (state.created = new Date());
+  state.lastModified = new Date();
+  const { example, modified, view, ...project } = state;
+  manager.save(project, copy);
+  return { view, ...project };
 }
 
-function saveProject(project: Project): Project {
-  project.lastModified = new Date();
-  manager.save(project);
-  return { ...project };
+function loadProject(id: string): ProjectState {
+  return initProject(manager.load(id));
 }
 
-function loadProject(id: string): Project {
-  return loadProjectVariables(manager.load(id));
-}
-
-function loadProjectVariables(project: Project): Project {
+function initProject(project: Project): ProjectState {
   for (const [key, store] of [['globals', globals.variables], ['variables', ctx.variables]] as const) {
     store.clear();
 
@@ -69,26 +105,55 @@ function loadProjectVariables(project: Project): Project {
     }
   }
 
-  return project;
+  engine.clearAll();
+
+  for (const source of project.sources) {
+    engine.mergeSource(source);
+  }
+
+  for (const guide of project.guides) {
+    engine.mergeGuide(guide);
+  }
+
+  engine.setOptions(project.simulation, globals.get('$c'));
+
+  const view = getDefaultProjectView(project);
+  engine.setView(view);
+
+  return { ...project, view };
 }
 
-function deleteProject(project: Project, id: string): Project {
+function deleteProject(state: ProjectState, id: string): ProjectState {
   manager.delete(id);
-  return { ...project };
+  return { ...state };
 }
 
-function setOption(project: Project, action: SetOptionAction): Project {
-  project[action.kind] = {
-    ...project[action.kind],
-    [action.option]: action.value
-  };
-
-  return { ...project };
+function setView(state: ProjectState, x0: number, y0: number, scale: number): ProjectState {
+  const view = { x0, y0, scale };
+  engine.setView(view);
+  return { ...state, view };
 }
 
-function addSource(project: Project): Project {
-  project.sources = project.sources.concat({
-    [$id]: manager.nextId(),
+function resetView(state: ProjectState): ProjectState {
+  const view = getDefaultProjectView(state);
+  engine.setView(view);
+  return { ...state, view };
+}
+
+function setOption<O extends keyof SimulationOptions>(
+  state: ProjectState,
+  option: O,
+  value: SimulationOptions[O],
+): ProjectState {
+  state.simulation = { ...state.simulation, [option]: value };
+  engine.setOptions(state.simulation, globals.get('$c'));
+  return { ...state, modified: true };
+}
+
+function addSource(state: ProjectState): ProjectState {
+  const id = randomKey(state.sources);
+  const source: Source = {
+    id,
     x: expr(0),
     y: expr(0),
     angle: expr(0),
@@ -99,72 +164,119 @@ function addSource(project: Project): Project {
     invert: false,
     model: 'omni',
     enabled: true,
-  });
+  };
 
-  return { ...project };
+  state.sources = [...state.sources, source];
+  engine.mergeSource(source);
+  return { ...state, modified: true };
 }
 
-function addGuide(project: Project, kind: 'rect' | 'line'): Project {
+function addGuide(state: ProjectState, kind: 'rect' | 'line'): ProjectState {
   const common = {
-    [$id]: manager.nextId(),
+    id: randomKey(state.guides),
     angle: expr(0),
     color: '#000',
   };
 
-  project.guides = project.guides.concat(
-    kind === 'rect'
-      ? { ...common, kind, x: expr(0), y: expr(-3), width: expr(10), height: expr(6) }
-      : { ...common, kind, x: expr(-10), y: expr(0), reflect: false, absorption: expr(0) }
-  );
+  const guide = kind === 'rect'
+    ? { ...common, kind, x: expr(0), y: expr(-3), width: expr(10), height: expr(6) }
+    : { ...common, kind, x: expr(-10), y: expr(0), reflect: false, absorption: expr(0) };
 
-  return { ...project };
+  state.guides = [...state.guides, guide];
+  engine.mergeGuide(guide);
+  return { ...state, modified: true };
 }
 
-function setSourceProp<P extends SourceProperty>(project: Project, id: number, name: P, value: PropertyValue<Source, P>): Project {
-  project.sources = project.sources.map((src) => patch(src, id, name, value));
-  return { ...project };
+function setSourceProp<P extends SourceProperty>(
+  state: ProjectState,
+  id: string,
+  name: P,
+  value: PropertyValue<Source, P>,
+): ProjectState {
+  const [sources, source] = patch(state.sources, id, name, value);
+
+  if (source) {
+    state.sources = sources;
+    engine.mergeSource(source);
+    return { ...state, modified: true };
+  } else {
+    return state;
+  }
 }
 
-function setGuideProp<P extends GuideProperty>(project: Project, id: number, name: P, value: PropertyValue<Rect & Line, P>): Project {
-  project.guides = project.guides.map((g) => patch(g, id, name, value));
-  return { ...project };
+
+function setGuideProp<P extends GuideProperty>(
+  state: ProjectState,
+  id: string,
+  name: P,
+  value: PropertyValue<Rect & Line, P>,
+): ProjectState {
+  const [guides, guide] = patch(state.guides, id, name, value);
+
+  if (guide) {
+    state.guides = guides;
+    engine.mergeGuide(guide);
+    return { ...state, modified: true };
+  } else {
+    return state;
+  }
 }
 
-function deleteSource(project: Project, id: number): Project {
-  project.sources = project.sources.filter((src) => src[$id] !== id);
-  return { ...project };
+function deleteSource(state: ProjectState, id: string): ProjectState {
+  state.sources = state.sources.filter((source) => source.id !== id);
+  engine.deleteSource(id);
+  return { ...state, modified: true };
 }
 
-function deleteGuide(project: Project, id: number): Project {
-  project.guides = project.guides.filter((src) => src[$id] !== id);
-  return { ...project };
+function deleteGuide(state: ProjectState, id: string): ProjectState {
+  state.guides = state.guides.filter((guide) => {
+    if (guide.id !== id) {
+      return true;
+    }
+
+    engine.deleteGuide(id);
+    return false;
+  });
+
+  return { ...state, modified: true };
 }
 
-function addVar(project: Project, name: string, min: number, max: number, global?: boolean): Project {
+
+function addVar(state: ProjectState, name: string, min: number, max: number, value?: number, quick: boolean = true, global?: boolean): ProjectState {
   const [key, map] = global ? ['globals', globals.variables] : ['variables', ctx.variables];
-  const value = (min + max) / 2;
-  project[key] = { ...project[key], [name]: { min, max, value } };
+  value ??= (min + max) / 2;
+  const local = global ? {} : { quick };
+  state[key] = { ...state[key], [name]: { min, max, value, ...local } };
   map.set(name, value);
-  return checkDependencies(project, name);
+  return checkDependencies(state, name);
 }
 
-function setVar(project: Project, name: string, value: number, global?: boolean): Project {
+function setVar(state: ProjectState, name: string, value: number, global?: boolean): ProjectState {
   const [key, map] = global ? ['globals', globals.variables] : ['variables', ctx.variables];
-  const { min, max } = project[key][name];
+  const { min, max, ...rest } = state[key][name];
   value = Math.max(min, Math.min(max, value));
-  project[key] = { ...project[key], [name]: { min, max, value } };
+  state[key] = { ...state[key], [name]: { min, max, ...rest, value } };
   map.set(name, value);
-  return checkDependencies(project, name);
+  return checkDependencies(state, name);
 }
 
-function delVar(project: Project, name: string, global?: boolean): Project {
+function delVar(state: ProjectState, name: string, global?: boolean): ProjectState {
   const [key, map] = global ? ['globals', globals.variables] : ['variables', ctx.variables];
-  const { [name]: _, ...others } = project[key];
-  project[key] = others;
+  const { [name]: _, ...others } = state[key];
+  state[key] = others;
   map.delete(name);
-  return checkDependencies(project, name);
+  return checkDependencies(state, name);
 }
 
+function setVarQuick(state: ProjectState, name: string, quick: boolean): ProjectState {
+  return {
+    ...state,
+    variables: {
+      ...state.variables,
+      [name]: { ...state.variables[name], quick },
+    },
+  };
+}
 
 
 function expr(value: number): ExpressionProperty {
@@ -176,10 +288,21 @@ function expr(value: number): ExpressionProperty {
   };
 }
 
-function patch<O extends { [$id]: number }>(o: O, id: number, k: any, v: any): O {
-  if (o[$id] !== id) return o;
-  o[k] = typeof v === 'string' && typeof o[k] === 'object' ? toExpr(v) : v;
-  return { ...o };
+function patch<O extends { id: string }>(items: O[], id: string, k: any, v: any): [O[], O | undefined] {
+  let patched: O | undefined;
+
+  items = items.map((item) => {
+    if (patched || item.id !== id) {
+      return item;
+    }
+
+    return patched = {
+      ...item,
+      [k]: typeof v === 'string' && typeof item[k] === 'object' ? toExpr(v) : v,
+    };
+  });
+
+  return [items, patched];
 }
 
 function toExpr(source: string): ExpressionProperty {
@@ -220,7 +343,7 @@ function solve(property: ExpressionProperty): boolean {
   return false;
 }
 
-function checkDependencies(project: Project, variable: string): Project {
+function checkDependencies(project: ProjectState, variable: string): ProjectState {
   let ch1 = false, ch2 = false;
 
   const sources = project.sources.map((src) => {
@@ -232,23 +355,25 @@ function checkDependencies(project: Project, variable: string): Project {
       }
     }
 
+    ch && engine.mergeSource(src);
     return ch ? { ...src } : src;
   });
 
   ch1 && (project.sources = sources);
 
-  const guides = project.guides.map((src) => {
+  const guides = project.guides.map((guide) => {
     let ch = false;
 
     for (const prop of ['x', 'y', 'angle', 'width', 'height', 'absorption']) {
-      if (src[prop] && src[prop][$vars].includes(variable) && solve(src[prop])) {
+      if (guide[prop] && guide[prop][$vars].includes(variable) && solve(guide[prop])) {
         ch2 = ch = true;
       }
     }
 
-    return ch ? { ...src } : src;
+    ch && engine.mergeGuide(guide);
+    return ch ? { ...guide } : guide;
   });
 
   ch2 && (project.guides = guides);
-  return { ...project };
+  return { ...project, modified: true };
 }

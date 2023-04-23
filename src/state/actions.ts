@@ -1,17 +1,32 @@
-import { $id } from '../utils';
-import { ExpressionProperty, Guide, Line, Project, Rect, Source } from './types';
+import {
+  ExpressionProperty,
+  Line,
+  Rect,
+  SimulationOptions,
+  Source,
+} from './types';
+
+export type SetCanvasAction = {
+  type: 'set-canvas';
+  canvasType: 'ui' | 'plot' | 'context' | 'legend';
+  canvas: HTMLCanvasElement;
+};
+
+export type SetCanvasSizeAction = {
+  type: 'set-canvas-size';
+  canvasType: 'plot' | 'context' | 'legend';
+  width: number;
+  height: number;
+};
 
 export type CreateProjectAction = {
   type: 'create-project';
 };
 
-export type SetProjectNameAction = {
-  type: 'set-project-name';
-  name: string;
-};
-
 export type SaveProjectAction = {
   type: 'save-project';
+  name: string;
+  copy?: boolean;
 };
 
 export type LoadProjectAction = {
@@ -19,20 +34,39 @@ export type LoadProjectAction = {
   id: string;
 };
 
+export type ReloadProjectAction = {
+  type: 'reload-project';
+};
+
 export type DeleteProjectAction = {
   type: 'delete-project';
   id: string;
 };
 
-export type OptionKind = 'area' | 'simulation';
-export type OptionName<K extends OptionKind> = Exclude<keyof Project[K], symbol>;
-export type OptionValue<K extends OptionKind, O extends OptionName<K>> = Project[K][O];
+export type SetViewAction = {
+  type: 'set-view';
+  x0: number;
+  y0: number;
+  scale: number;
+};
 
-export type SetOptionAction<K extends OptionKind = any, O extends OptionName<K> = any> = {
+export type ResetViewAction = {
+  type: 'reset-view';
+};
+
+export type ShowContextAction = {
+  type: 'show-context';
+  x: number;
+  y: number;
+};
+
+export type OptionName = string & keyof SimulationOptions;
+export type OptionValue<O extends OptionName> = SimulationOptions[O];
+
+export type SetOptionAction<O extends OptionName = any> = {
   type: 'set-opt';
-  kind: K;
   option: O;
-  value: OptionValue<K, O>;
+  value: OptionValue<O>;
 };
 
 export type AddSourceAction = {
@@ -46,32 +80,32 @@ export type AddGuideAction = {
 
 export type PropertyValue<O, P extends keyof O> = O[P] extends ExpressionProperty ? string : O[P];
 
-export type SourceProperty = Exclude<keyof Source, symbol>;
+export type SourceProperty = Exclude<keyof Source, symbol | 'id'>;
 
 export type SetSourcePropertyAction<P extends SourceProperty = any> = {
   type: 'set-src';
-  id: number;
+  id: string;
   name: P;
   value: PropertyValue<Source, P>;
 };
 
-export type GuideProperty = Exclude<keyof Rect | keyof Line, symbol>;
+export type GuideProperty = Exclude<keyof Rect | keyof Line, symbol | 'id'>;
 
 export type SetGuidePropertyAction<P extends GuideProperty = any> = {
   type: 'set-guide';
-  id: number;
+  id: string;
   name: P;
   value: PropertyValue<Rect & Line, P>;
 };
 
 export type DeleteSourceAction = {
   type: 'del-src';
-  id: number;
+  id: string;
 };
 
 export type DeleteGuideAction = {
   type: 'del-guide';
-  id: number;
+  id: string;
 };
 
 export type AddVariableAction = {
@@ -79,6 +113,8 @@ export type AddVariableAction = {
   name: string;
   min: number;
   max: number;
+  value?: number;
+  quick?: boolean;
   global?: boolean;
 };
 
@@ -95,76 +131,132 @@ export type DeleteVariableAction = {
   global?: boolean;
 };
 
+export type SetVariableQuickAction = {
+  type: 'set-var-quick';
+  name: string;
+  quick: boolean;
+};
+
 export type Action =
+  | SetCanvasAction
+  | SetCanvasSizeAction
   | CreateProjectAction
-  | SetProjectNameAction
   | SaveProjectAction
   | LoadProjectAction
+  | ReloadProjectAction
   | DeleteProjectAction
+  | SetViewAction
+  | ResetViewAction
+  | ShowContextAction
   | SetOptionAction
   | AddSourceAction
-  | AddGuideAction
   | SetSourcePropertyAction
-  | SetGuidePropertyAction
   | DeleteSourceAction
+  | AddGuideAction
+  | SetGuidePropertyAction
   | DeleteGuideAction
   | AddVariableAction
   | SetVariableAction
-  | DeleteVariableAction;
+  | DeleteVariableAction
+  | SetVariableQuickAction;
 
-export const proj = {
+
+
+const proj = {
   create(): CreateProjectAction {
     return { type: 'create-project' };
   },
-  setName(name: string): SetProjectNameAction {
-    return { type: 'set-project-name', name };
-  },
-  save(): SaveProjectAction {
-    return { type: 'save-project' };
+  save(name: string, copy?: boolean): SaveProjectAction {
+    return { type: 'save-project', name, copy };
   },
   load(id: string): LoadProjectAction {
     return { type: 'load-project', id };
+  },
+  reload(): ReloadProjectAction {
+    return { type: 'reload-project' };
   },
   del(id: string): DeleteProjectAction {
     return { type: 'delete-project', id };
   },
 };
 
-export const set = {
-  opt<K extends OptionKind, O extends OptionName<K>>(kind: K, option: O, value: OptionValue<K, O>): SetOptionAction<K, O> {
-    return { type: 'set-opt', kind, option, value };
+const canvas = {
+  set(canvasType: 'plot' | 'ui' | 'context' | 'legend', canvas: HTMLCanvasElement): SetCanvasAction {
+    return { type: 'set-canvas', canvasType, canvas };
   },
-  src<P extends SourceProperty>(source: Source, name: P, value: PropertyValue<Source, P>): SetSourcePropertyAction<P> {
-    return { type: 'set-src', id: source[$id], name, value };
-  },
-  guide<P extends GuideProperty>(guide: Guide, name: P, value: PropertyValue<Rect & Line, P>): SetGuidePropertyAction<P> {
-    return { type: 'set-guide', id: guide[$id], name, value };
-  },
-  var(name: string, value: number, global?: boolean): SetVariableAction {
-    return { type: 'set-var', name, value, global };
+  setSize(canvasType: 'plot' | 'context' | 'legend', width: number, height: number): SetCanvasSizeAction {
+    return { type: 'set-canvas-size', canvasType, width, height };
   },
 };
 
-export const add = {
-  src(): AddSourceAction {
+const view = {
+  set(x0: number, y0: number, scale: number): SetViewAction {
+    return { type: 'set-view', x0, y0, scale };
+  },
+  reset(): ResetViewAction {
+    return { type: 'reset-view' };
+  },
+};
+
+const ctx = {
+  show(x: number, y: number): ShowContextAction {
+    return { type: 'show-context', x, y };
+  },
+};
+
+const sim = {
+  set<O extends OptionName>(option: O, value: OptionValue<O>): SetOptionAction<O> {
+    return { type: 'set-opt', option, value };
+  },
+};
+
+const src = {
+  add(): AddSourceAction {
     return { type: 'add-src' };
   },
-  guide(kind: 'rect' | 'line'): AddGuideAction {
-    return { type: 'add-guide', kind };
+  set<P extends SourceProperty>(id: string, name: P, value: PropertyValue<Source, P>): SetSourcePropertyAction<P> {
+    return { type: 'set-src', id, name, value };
   },
-  var(name: string, min: number, max: number): AddVariableAction {
-    return { type: 'add-var', name, min, max };
+  del(id: string): DeleteSourceAction {
+    return { type: 'del-src', id };
   },
 };
 
-export const del = {
-  src(source: Source): DeleteSourceAction {
-    return { type: 'del-src', id: source[$id] };
+const guide = {
+  add(kind: 'rect' | 'line'): AddGuideAction {
+    return { type: 'add-guide', kind };
   },
-  guide(guide: Guide): DeleteGuideAction {
-    return { type: 'del-guide', id: guide[$id] };
+  set<P extends GuideProperty>(id: string, name: P, value: PropertyValue<Rect & Line, P>): SetGuidePropertyAction<P> {
+    return { type: 'set-guide', id, name, value };
   },
-  var(name: string, global?: boolean): DeleteVariableAction {
-    return { type: 'del-var', name, global };
+  del(id: string): DeleteGuideAction {
+    return { type: 'del-guide', id };
   },
 };
+
+const $var = {
+  add(name: string, min: number, max: number, value?: number, quick?: boolean, global?: boolean): AddVariableAction {
+    return { type: 'add-var', name, min, max, value, quick, global };
+  },
+  set(name: string, value: number, global?: boolean): SetVariableAction {
+    return { type: 'set-var', name, value, global };
+  },
+  del(name: string, global?: boolean): DeleteVariableAction {
+    return { type: 'del-var', name, global };
+  },
+  setQuick(name: string, quick: boolean): SetVariableQuickAction {
+    return { type: 'set-var-quick', name, quick };
+  },
+};
+
+export const $ = {
+  proj,
+  canvas,
+  view,
+  ctx,
+  sim,
+  src,
+  guide,
+  var: $var,
+};
+

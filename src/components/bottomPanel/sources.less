@@ -1,0 +1,52 @@
+#sources {
+  width: 80vw;
+  max-width: min(80vw, 960px);
+
+  .lg-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .src-x, .src-y, .src-angle, .src-width, .src-height, .src-delay, .src-gain {
+    width: 10%;
+  }
+
+  .src-x, .src-y, .src-angle, .src-width, .src-height, .src-delay, .src-invert {
+    svg {
+      position: relative;
+      top: 2px;
+    }
+  }
+
+  .src-invert {
+    .field {
+      justify-content: center;
+    }
+  }
+
+  .src-rm {
+    text-align: right;
+  }
+
+  .src-add {
+    padding: 0.5em 0;
+  }
+
+  @media (max-width: 1023px) {
+    .lg-table .row-wrap {
+      padding-bottom: 1.5em;
+
+      .src-en { width: 7%; order: 1; }
+      .src-x { width: 28%; order: 2; padding: 3px; }
+      .src-y { width: 28%; order: 3; padding: 3px; }
+      .src-rm { width: 7%; order: 4; margin-left: auto; }
+      .src-width { width: 28%; order: 5; padding: 3px; margin-left: 7%; }
+      .src-height { width: 28%; order: 6; padding: 3px; }
+      .src-angle { width: 28%; order: 7; padding: 3px; }
+      .src-delay { width: 28%; order: 8; padding: 3px; margin-left: 7%; }
+      .src-gain { width: 28%; order: 9; padding: 3px; }
+      .src-invert { width: 14%; order: 10; }
+      .src-model { width: 14%; order: 11; }
+    }
+  }
+}

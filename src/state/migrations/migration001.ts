@@ -1,27 +1,18 @@
-import { Project } from '../types';
+import { RawProject } from '../types';
 import examples from '../examples.json';
-import { randomString } from '../utils';
+import { randomKey } from '../utils';
 
-function genId(projects: Project[]): string {
-  while (true) {
-    const id = randomString();
-
-    if (!projects.find((p) => p.id === id)) {
-      return id;
-    }
-  }
-}
 
 /**
  * 1. discard example projects which might've been stored in early version
  * 2. add project id if missing
  * 3. add absorption coefficient to line guides if missing
  */
-export function migration001(projects: Project[]): Project[] {
-  const withoutExamples = projects.filter((p) => !examples.find((e) => e.name === p.name));
+export function migration001(projects: RawProject[]): RawProject[] {
+  const withoutExamples = projects.filter(isNotExample);
 
   return withoutExamples.map((p) => {
-    p.id || (p.id = genId(withoutExamples));
+    p.id ??= randomKey(withoutExamples);
 
     for (const guide of p.guides) {
       if (guide.kind === 'line' && !guide.absorption) {
@@ -31,4 +22,10 @@ export function migration001(projects: Project[]): Project[] {
 
     return p;
   });
+}
+
+function isNotExample(project: RawProject): boolean {
+  return project.id !== undefined
+    ? !/^examples\//.test(project.id)
+    : !examples.find((e) => e.name === project.name);
 }

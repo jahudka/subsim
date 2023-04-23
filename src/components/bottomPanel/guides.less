@@ -1,0 +1,85 @@
+#guides {
+  width: 80vw;
+  max-width: min(80vw, 960px);
+
+  .lg-table {
+    width: 100%;
+    table-layout: fixed;
+  }
+
+  .guide-kind {
+    width: 5%;
+  }
+
+  .guide-x, .guide-y, .guide-angle, .guide-width, .guide-height, .guide-absorption, .guide-spacer {
+    width: 10%;
+  }
+
+  .guide-color {
+    width: 7%;
+
+    svg {
+      position: relative;
+      top: -2px;
+    }
+
+    input {
+      height: 1.6em;
+    }
+  }
+
+  .guide-label {
+    width: 13%;
+  }
+
+  .guide-x, .guide-angle, .guide-height {
+    svg {
+      position: relative;
+      top: 1px;
+    }
+  }
+
+  .guide-y, .guide-width, .guide-reflect, .guide-absorption, .guide-label {
+    svg {
+      position: relative;
+      top: 2px;
+    }
+  }
+
+  .guide-reflect {
+    .field {
+      justify-content: center;
+    }
+  }
+
+  .guide-rm {
+    text-align: right;
+  }
+
+  .guide-add {
+    padding: 0.5em 0;
+  }
+
+  @media (max-width: 1023px) {
+    .lg-table .row-wrap {
+      padding-bottom: 1.5em;
+
+      .guide-kind { width: 7%; order: 1; }
+      .guide-x { width: 28%; order: 2; padding: 3px; }
+      .guide-y { width: 28%; order: 3; padding: 3px; }
+      .guide-angle { width: 28%; order: 4; padding: 3px; }
+      .guide-rm { width: 7%; order: 5; margin-left: auto; }
+      .guide-width, .guide-reflect { width: 28%; order: 6; padding: 3px; margin-left: 7%; }
+      .guide-height, .guide-absorption { width: 28%; order: 7; padding: 3px; }
+
+      .guide-color {
+        width: 20%;
+        order: 8;
+        svg { top: 0; }
+      }
+
+      .guide-label { width: 55%; order: 9; margin-left: 7.5%; }
+      .guide-spacer { display: none; }
+    }
+  }
+}

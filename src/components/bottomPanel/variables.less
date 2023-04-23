@@ -1,0 +1,93 @@
+#variables {
+  width: 80vw;
+  max-width: min(80vw, 600px);
+
+  .var-range {
+    input {
+      width: 4em;
+    }
+
+    @media (min-width: 1024px) {
+      em {
+        display: inline-block;
+        width: 4em;
+        text-align: center;
+
+        &::after {
+          content: 'alue';
+        }
+      }
+    }
+
+    svg {
+      width: 0.65em;
+      height: 0.65em;
+      color: #555;
+    }
+  }
+
+  .var-rm {
+    text-align: right;
+  }
+
+  @media (max-width: 1023px) {
+    .row-wrap {
+      align-items: center;
+      padding-bottom: 1em;
+    }
+
+    .var-quick {
+      flex: 0 0 8%;
+      order: 1;
+    }
+
+    .var-name {
+      flex: 0 0 32%;
+      max-width: 32%;
+      order: 2;
+    }
+
+    .var-range {
+      flex: 0 0 60%;
+      order: 5;
+      margin-left: auto;
+    }
+
+    .var-value {
+      flex: 0 1 50%;
+      max-width: 50%;
+      order: 3;
+    }
+
+    .var-rm {
+      flex: 0 0 5%;
+      order: 4;
+      margin-left: auto;
+    }
+
+    .var-add {
+      padding: 1em 0;
+      border-top: 1px solid #999;
+
+      .var-value {
+        display: none;
+      }
+
+      .var-range {
+        flex: 0 0 50%;
+        order: 3;
+      }
+    }
+
+    .field-numeric input {
+      width: 3em;
+      -moz-appearance: textfield;
+
+      &::-webkit-outer-spin-button,
+      &::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
+  }
+}

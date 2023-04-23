@@ -4,12 +4,12 @@
     "name": "1 sub per side",
     "created": "2023-01-05T01:55:00.000Z",
     "lastModified": "2023-01-05T01:55:00.000Z",
-    "area": { "width": 100, "depth": 60, "x0": 50, "y0": 20, "scale": 8, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
-        "x": { "source": "stageWidth / -2 - 0.5", "value": -4.5 },
-        "y": { "source": "0", "value": 0 },
+        "id": "00000001",
+        "x": { "source": "stageWidth / -2", "value": -5 },
+        "y": { "source": "1", "value": 1 },
         "angle": { "source": "0", "value": 0 },
         "width": { "source": "1", "value": 1 },
         "depth": { "source": "0.6", "value": 0.6 },
@@ -20,8 +20,9 @@
         "enabled": true
       },
       {
-        "x": { "source": "stageWidth / 2 + 0.5", "value": 4.5 },
-        "y": { "source": "0", "value": 0 },
+        "id": "00000002",
+        "x": { "source": "stageWidth / 2", "value": 5 },
+        "y": { "source": "1", "value": 1 },
         "angle": { "source": "0", "value": 0 },
         "width": { "source": "1", "value": 1 },
         "depth": { "source": "0.6", "value": 0.6 },
@@ -34,20 +35,21 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "stageDepth / -2", "value": -3 },
         "angle": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "kind": "rect",
-        "width": { "source": "stageWidth", "value": 8 },
+        "width": { "source": "stageWidth", "value": 10 },
         "height": { "source": "stageDepth", "value": 6 },
         "label": "stage"
       }
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
     "variables": {
-      "stageWidth": { "min": 2, "max": 50, "value": 8 },
-      "stageDepth": { "min": 2, "max": 50, "value": 6 }
+      "stageWidth": { "min": 2, "max": 50, "value": 10, "quick": true },
+      "stageDepth": { "min": 2, "max": 50, "value": 6, "quick": true }
     }
   },
   {
@@ -55,10 +57,10 @@
     "name": "center cluster",
     "created": "2023-01-05T01:54:00.000Z",
     "lastModified": "2023-01-05T01:54:00.000Z",
-    "area": { "width": 100, "depth": 80, "x0": 50, "y0": 30, "scale": 8, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
+        "id": "00000001",
         "x": { "source": "-0.5 - spacing / 2", "value": -0.5 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -71,6 +73,7 @@
         "enabled": true
       },
       {
+        "id": "00000002",
         "x": { "source": "0.5 + spacing / 2", "value": 0.5 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -85,10 +88,11 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-4.5", "value": -4.5 },
         "angle": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "kind": "rect",
         "width": { "source": "10", "value": 10 },
         "height": { "source": "6", "value": 6 },
@@ -96,17 +100,17 @@
       }
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "spacing": { "min": 0, "max": 10, "value": 0 } }
+    "variables": { "spacing": { "min": 0, "max": 10, "value": 0, "quick": true } }
   },
   {
     "id": "examples/2-element-cardioid",
     "name": "2-element cardioid",
     "created": "2023-01-05T01:53:00.000Z",
     "lastModified": "2023-01-05T01:53:00.000Z",
-    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "180", "value": 180 },
@@ -119,6 +123,7 @@
         "enabled": true
       },
       {
+        "id": "00000002",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "qw(f)", "value": 1.4291666666666667 },
         "angle": { "source": "0", "value": 0 },
@@ -133,10 +138,11 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-3", "value": -3 },
         "angle": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "kind": "rect",
         "width": { "source": "10", "value": 10 },
         "height": { "source": "6", "value": 6 },
@@ -144,17 +150,17 @@
       }
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
+    "variables": { "f": { "min": 20, "max": 120, "value": 60, "quick": true } }
   },
   {
     "id": "examples/2-element-end-fire",
     "name": "2-element end-fire",
     "created": "2023-01-05T01:52:00.000Z",
     "lastModified": "2023-01-05T01:52:00.000Z",
-    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -167,6 +173,7 @@
         "enabled": true
       },
       {
+        "id": "00000002",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "qw(f)", "value": 1.4291666666666667 },
         "angle": { "source": "0", "value": 0 },
@@ -181,10 +188,11 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-4.5", "value": -4.5 },
         "angle": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "kind": "rect",
         "width": { "source": "10", "value": 10 },
         "height": { "source": "6", "value": 6 },
@@ -192,17 +200,17 @@
       }
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "f": { "min": 20, "max": 120, "value": 60 } }
+    "variables": { "f": { "min": 20, "max": 120, "value": 60, "quick": true } }
   },
   {
     "id": "examples/horizontal-cardioid-stack",
     "name": "horizontal cardioid stack",
     "created": "2023-01-05T01:51:00.000Z",
     "lastModified": "2023-01-05T01:51:00.000Z",
-    "area": { "width": 140, "depth": 100, "x0": 70, "y0": 25, "scale": 6, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
+        "id": "00000001",
         "x": { "source": "-1", "value": -1 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -215,6 +223,7 @@
         "enabled": true
       },
       {
+        "id": "00000002",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-0.6", "value": -0.6 },
         "angle": { "source": "180", "value": 180 },
@@ -227,6 +236,7 @@
         "enabled": true
       },
       {
+        "id": "00000003",
         "x": { "source": "1", "value": 1 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -241,10 +251,11 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-4.5", "value": -4.5 },
         "angle": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "kind": "rect",
         "width": { "source": "10", "value": 10 },
         "height": { "source": "6", "value": 6 },
@@ -259,10 +270,10 @@
     "name": "sub in corner",
     "created": "2023-01-05T01:50:00.000Z",
     "lastModified": "2023-01-05T01:50:00.000Z",
-    "area": { "width": 50, "depth": 50, "x0": 5, "y0": 5, "scale": 10, "orientation": "portrait" },
-    "simulation": { "frequency": 60, "resolution": 4, "gain": 0 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
     "sources": [
       {
+        "id": "00000001",
         "x": { "source": "x + 5", "value": 6 },
         "y": { "source": "y + 5", "value": 6 },
         "angle": { "source": "45", "value": 45 },
@@ -277,27 +288,32 @@
     ],
     "guides": [
       {
+        "id": "00000001",
         "kind": "line",
         "x": { "source": "5", "value": 5 },
         "y": { "source": "20", "value": 20 },
         "angle": { "source": "0", "value": 0 },
         "reflect": true,
         "absorption": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "label": "wall"
       },
       {
+        "id": "00000002",
         "kind": "line",
         "x": { "source": "20", "value": 20 },
         "y": { "source": "5", "value": 5 },
         "angle": { "source": "90", "value": 90 },
         "reflect": true,
         "absorption": { "source": "0", "value": 0 },
-        "color": "#000",
+        "color": "#000000",
         "label": "wall"
       }
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "x": { "min": 0, "max": 25, "value": 1 }, "y": { "min": 0, "max": 25, "value": 1 } }
+    "variables": {
+      "x": { "min": 0, "max": 25, "value": 1, "quick": true },
+      "y": { "min": 0, "max": 25, "value": 1, "quick": true }
+    }
   }
 ]

@@ -1,0 +1,274 @@
+.row {
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: baseline;
+}
+
+.row-wrap {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+}
+
+.flex-min { flex: 0 0 auto; }
+.flex-max { flex: 1 1 auto; }
+each(range(12), { .flex-@{value} { flex: 0 0 (100% * @value/12); } });
+
+.table {
+  display: table;
+  width: 100%;
+
+  > .row, > .row-wrap {
+    display: table-row;
+
+    > * {
+      display: table-cell;
+      padding: 3px;
+      vertical-align: middle;
+    }
+
+    > .flex-min {
+      width: 0;
+    }
+
+    svg {
+      vertical-align: baseline;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg-table {
+    .table;
+  }
+}
+
+.spaces() { m: margin; p: padding; };
+.directions() { l: left; r: right; t: top; b: bottom; };
+.axes() { x: left, right; y: top, bottom; };
+@sizes: 0.5em, 0.75em, 1em, 1.25em, 1.5em;
+
+each(.spaces(), .(@sp, @s) {
+  each(.directions(), .(@dir, @d) {
+    each(@sizes, .(@spv, @spi) {
+      .@{s}@{d}-@{spi} { @{sp}-@{dir}: @spv; }
+    });
+    .@{s}@{d}-auto { @{sp}-@{dir}: auto; }
+  });
+  each(.axes(), .(@ax, @a) {
+    each(@sizes, .(@spv, @spi) {
+      .@{s}@{a}-@{spi} {
+        each(@ax, .(@dir) { @{sp}-@{dir}: @spv; });
+      }
+    });
+    .@{s}@{a}-auto {
+      each(@ax, .(@dir) { @{sp}-@{dir}: auto; });
+    }
+  });
+});
+
+
+.panel-shape() {
+  padding: 7px 15px;
+  border-radius: 18px;
+}
+
+.panel {
+  .panel-shape;
+  background: #fffa;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 1px 2px #0004;
+}
+
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: flex-start;
+  background: #0007;
+  backdrop-filter: blur(10px);
+
+  &.dialog-init {
+    opacity: 0;
+  }
+
+  &.dialog-visible {
+    transition: opacity 0.3s;
+    opacity: 1;
+  }
+
+  &.dialog-closing {
+    transition: opacity 0.3s;
+    opacity: 0;
+  }
+
+  .dialog-content {
+    .panel-shape;
+    width: 90vw;
+    max-width: 360px;
+    margin-top: 3em;
+    background: #fff;
+    box-shadow: 0 1px 3px #0009;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity 0.3s, transform 0.3s ease-in;
+  }
+
+  &.dialog-visible .dialog-content {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.3s, transform 0.3s ease-out;
+  }
+}
+
+.collapsible {
+  overflow: hidden;
+
+  &.collapsible-collapsed {
+    opacity: 0;
+    max-height: 0;
+  }
+
+  &.collapsible-expand {
+    animation: 0.5s forwards collapsible-expand;
+  }
+
+  &.collapsible-collapse {
+    animation: 0.5s forwards collapsible-collapse;
+  }
+}
+
+@keyframes collapsible-expand {
+  0% {
+    opacity: 0;
+    max-height: 0;
+  }
+
+  50% {
+    opacity: 0;
+    max-height: 100vh;
+  }
+
+  100% {
+    opacity: 1;
+    max-height: 100vh;
+  }
+}
+
+@keyframes collapsible-collapse {
+  0% {
+    opacity: 1;
+    max-height: 100vh;
+  }
+
+  50% {
+    opacity: 0;
+    max-height: 100vh;
+  }
+
+  100% {
+    opacity: 0;
+    max-height: 0;
+  }
+}
+
+.switch {
+  position: relative;
+  overflow: hidden;
+  transition: width 300ms ease-in-out, height 300ms ease-in-out;
+
+  > .switch-item {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+    pointer-events: none;
+
+    &.switch-current {
+      z-index: 2;
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+}
+
+button {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  vertical-align: baseline;
+  cursor: pointer;
+
+  svg {
+    vertical-align: middle;
+  }
+
+  &[disabled] {
+    color: #999;
+    cursor: not-allowed;
+  }
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-muted {
+  color: #777;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+}
+
+.inline-sep {
+  display: block;
+
+  @media (min-width: 1024px) {
+    display: inline;
+
+    &::before {
+      content: ' | ';
+    }
+  }
+}
+
+code {
+  white-space: nowrap;
+  font-family: 'Source Code Pro', monospace;
+  color: #44f;
+}
+
+#legend {
+  position: absolute;
+  left: 15px;
+  top: 65px;
+  width: 50px;
+  height: 180px;
+  cursor: pointer;
+
+  @media (min-width: 1024px) {
+    left: 15px;
+    top: 5px;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}

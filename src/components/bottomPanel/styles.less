@@ -1,0 +1,40 @@
+#bottom-panel {
+  position: absolute;
+  bottom: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: flex-start;
+
+  .switch-item {
+    max-height: 50vh;
+    overflow-y: auto;
+
+    @media (min-width: 1024px) {
+      max-height: 30vh;
+    }
+  }
+
+  .collapsible.collapsible-expand {
+    animation-delay: 250ms;
+    animation-fill-mode: both;
+  }
+}
+
+#bottom-tabs {
+  border-bottom: 1px solid #999;
+  margin-bottom: 0.5em;
+
+  button {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+
+    &.current {
+      font-weight: bold;
+    }
+  }
+}
+
+#quick-controls, #simulation {
+  width: 80vw;
+  max-width: 300px;
+}

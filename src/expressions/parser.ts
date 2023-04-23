@@ -36,6 +36,10 @@ const operatorPrecedence = [
 // noinspection JSAssignmentUsedAsCondition
 export class Parser {
   parse(expression: string): Expression {
+    if (!expression.length) {
+      throw new ParseError('Empty expression');
+    }
+
     const stream = new TokenStream(expression, [T_WHITESPACE]);
     const expr: Expression = this.parseExpr(stream, true);
 

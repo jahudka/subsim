@@ -1,87 +1,72 @@
 import { extractVariables, Parser } from '../expressions';
-import { $expr, $id, $vars } from '../utils';
-import { migrate } from './migrations';
-import { ExpressionProperty, Project } from './types';
+import { $expr, $vars, safeDeepClone } from '../utils';
 import examples from './examples.json';
-import { randomString, safeDeepClone } from './utils';
+import { migrate } from './migrations';
+import { ExpressionProperty, Project, RawProject } from './types';
+import { randomKey } from './utils';
 
 export class ProjectManager {
   private readonly parser: Parser;
-  private readonly projects: Map<string, Project>;
-  private list?: Project[];
-  private gid: number = -1;
+  private readonly projects: Project[];
 
   constructor(parser: Parser) {
     this.parser = parser;
-    this.projects = new Map(this.readStorage().map((project) => [project.id, this.hydrate(project)]));
-  }
-
-  getName(id: string): string {
-    return this.projects.get(id)!.name;
+    this.projects = this.readStorage();
   }
 
   getList(): Project[] {
-    return this.list ??= [...this.projects.values()].sort((a, b) => b.lastModified.getTime() - a.lastModified.getTime());
+    return this.projects;
   }
 
   loadLast(): Project {
     for (const project of this.getList()) {
-      return safeDeepClone(project);
+      return this.hydrateData(safeDeepClone(project));
     }
 
     return this.create();
   }
 
   load(id: string): Project {
-    return safeDeepClone(this.projects.get(id)!);
+    return this.hydrateData(safeDeepClone(this.projects.find((p) => p.id === id)!));
   }
 
-  save(project: Project): void {
-    this.projects.set(project.id, project);
+  save(project: Project, copy?: boolean): void {
+    if (copy) {
+      project.id = randomKey(this.projects);
+    } else {
+      const idx = this.projects.findIndex((p) => p.id === project.id);
+      idx >= 0 && this.projects.splice(idx, 1);
+    }
+
+    this.projects.unshift(project);
     this.writeStorage();
   }
 
   delete(id: string): void {
-    this.projects.delete(id);
-    this.writeStorage();
-  }
+    const idx = this.projects.findIndex((p) => p.id === id);
 
-  nextId(): number {
-    if (++this.gid >= Number.MAX_SAFE_INTEGER) {
-      this.gid = 0;
+    if (idx >= 0) {
+      this.projects.splice(idx, 1);
+      this.writeStorage();
     }
-
-    return this.gid;
   }
 
   create(): Project {
     const created = new Date();
     const project: Project = {
-      id: this.getNewProjectId(),
+      id: randomKey(this.projects),
       name: 'new project',
       created,
       lastModified: created,
-      area: {
-        width: 140,
-        depth: 100,
-        x0: 70,
-        y0: 25,
-        scale: 6,
-        orientation: 'portrait',
-      },
       simulation: {
         frequency: 60,
-        resolution: 4,
         gain: 0,
+        range: 54,
       },
       sources: [],
       guides: [],
       globals: {
-        $c: {
-          min: 300,
-          max: 400,
-          value: 343,
-        },
+        $c: { min: 300, max: 400, value: 343 },
       },
       variables: {},
     };
@@ -90,41 +75,34 @@ export class ProjectManager {
     return safeDeepClone(project);
   }
 
-  private getNewProjectId(): string {
-    while (true) {
-      const id = randomString();
-
-      if (!this.projects.has(id)) {
-        return id;
-      }
-    }
-  }
-
   private readStorage(): Project[] {
-    const projects: Project[] = migrate(JSON.parse(localStorage.getItem('projects') ?? '[]'));
-    return projects.concat(examples as any);
+    const projects: RawProject[] = migrate(JSON.parse(localStorage.getItem('projects') ?? '[]'));
+    return projects
+      .concat(examples.map((project: any): RawProject => ({ ...project, example: true })))
+      .map((project) => this.hydrateInfo(project));
   }
 
   private writeStorage(): void {
-    const projects = [...this.projects.values()].filter((p) => !/^examples\//.test(p.id));
+    const projects = [...this.projects.values()].filter((p) => !p.example);
     localStorage.setItem('projects', JSON.stringify(projects));
-    this.list = undefined;
   }
 
-  private hydrate(project: Project): Project {
-    project.created = new Date(project.created);
-    project.lastModified = new Date(project.lastModified);
+  private hydrateInfo({ created, lastModified, ...project }: RawProject): Project {
+    return {
+      ...project,
+      created: new Date(created),
+      lastModified: new Date(lastModified),
+    };
+  }
 
+  private hydrateData(project: Project): Project {
     for (const source of project.sources) {
-      source[$id] = this.nextId();
-
       for (const expr of [source.x, source.y, source.angle, source.width, source.depth, source.delay, source.gain]) {
         this.hydrateExpr(expr);
       }
     }
 
     for (const guide of project.guides) {
-      guide[$id] = this.nextId();
       this.hydrateExpr(guide.x);
       this.hydrateExpr(guide.y);
       this.hydrateExpr(guide.angle);
