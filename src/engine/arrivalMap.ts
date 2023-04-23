@@ -116,7 +116,7 @@ export class ArrivalMap {
 
       if (!xmap.has(x)) {
         const dist = distance(x, y, source.x.value, source.y.value);
-        const angle = Math.atan2(source.x.value - y, source.y.value - x) + rad(source.angle.value);
+        const angle = Math.atan2(source.y.value - y, source.x.value - x) + rad(source.angle.value);
         const gain = models[source.model](angle) / Math.max(0.1, dist);
 
         xmap.set(x, {
