@@ -38,10 +38,14 @@ export class LegendRenderer {
   private render(): void {
     this.frame = undefined;
 
+    if (!this.ctx) {
+      return;
+    }
+
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'middle';
-    this.ctx.font = '10px/1 Source Sans Pro';
+    this.ctx.font = '10px/1 "Source Sans Pro"';
 
     const { width: tw } = this.ctx.measureText('+00 dB');
     const vpad = 10;

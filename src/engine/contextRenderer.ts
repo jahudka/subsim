@@ -72,7 +72,7 @@ export class ContextRenderer extends EventEmitter {
     this.ctx.textBaseline = 'middle';
     this.ctx.textAlign = 'right';
     this.ctx.fillStyle = '#000';
-    this.ctx.font = '14px/1 Source Sans Pro';
+    this.ctx.font = '14px/1 "Source Sans Pro"';
     this.ctx.fillText(`${gain.toFixed(2).replace(/infinity/i, 'inf')} dB`, textWidth, this.height / 2);
 
     for (const { delay, gain } of arrivals) {

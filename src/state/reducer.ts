@@ -19,6 +19,10 @@ import {
 } from './types';
 import { getDefaultProjectView, randomKey } from './utils';
 
+try {
+  document.fonts.load('10px/1 "Source Sans Pro"').catch();
+} catch { /* noop */ }
+
 const parser = new Parser();
 const globals = new GlobalContext();
 const ctx = new Context(globals);
