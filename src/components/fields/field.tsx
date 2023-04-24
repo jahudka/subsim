@@ -11,6 +11,7 @@ export type FieldProps = Children & {
   addon?: ReactNode;
   tooltip?: ReactNode;
   forceTooltip?: boolean;
+  'data-tooltip'?: string;
 };
 
 export type BaseFieldProps<T> = Children & {
@@ -20,6 +21,7 @@ export type BaseFieldProps<T> = Children & {
   onChange?: (value: T) => void;
   disabled?: boolean;
   placeholder?: string;
+  'data-tooltip'?: string;
 };
 
 export type BaseFieldPropsWithIntro<T> = BaseFieldProps<T> & {

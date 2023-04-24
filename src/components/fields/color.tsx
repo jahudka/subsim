@@ -12,11 +12,11 @@ function validate(el: HTMLInputElement): string {
   return el.value;
 }
 
-export const ColorField: FC<ColorFieldProps> = ({ value, onChange, className, intro, children, ...props }) => {
+export const ColorField: FC<ColorFieldProps> = ({ value, onChange, className, intro, children, ['data-tooltip']: tt, ...props }) => {
   const [state, handleChange] = useField(value, onChange, { validate });
 
   return (
-    <Field type="color" className={className} error={state.error} intro={intro} addon={children}>
+    <Field type="color" className={className} error={state.error} intro={intro} addon={children} data-tooltip={tt}>
       <input {...props} type="color" value={state.value} onChange={handleChange} />
     </Field>
   );

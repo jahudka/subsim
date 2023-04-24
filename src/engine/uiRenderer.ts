@@ -72,7 +72,7 @@ export class UiRenderer {
 
     this.ctx.strokeStyle = '#777';
     this.ctx.fillStyle = '#777';
-    this.ctx.font = '10px/1 "Source Sans Pro"';
+    this.ctx.font = '10px/1 "Source Sans Pro", sans-serif';
 
     const step = this.computeStepSize();
     const x0 = Math.round(-this.view.x0 * this.view.scale);

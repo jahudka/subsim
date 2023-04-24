@@ -4,7 +4,11 @@
   left: 50%;
   transform: translateX(-50%);
   width: 80vw;
-  max-width: 360px;
+  max-width: calc(100vw - 2 * 90px);
+
+  @media (min-width: 540px) {
+    max-width: 360px;
+  }
 
   .layers {
     position: relative;

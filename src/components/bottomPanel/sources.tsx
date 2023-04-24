@@ -51,34 +51,34 @@ export const SourceUi: FC<Source> = ({
   return (
     <div className="row-wrap">
       <div className="src-en">
-        <BooleanField value={enabled} onChange={(en) => dispatch($.src.set(id, 'enabled', en))} />
+        <BooleanField value={enabled} onChange={(en) => dispatch($.src.set(id, 'enabled', en))} data-tooltip="sources.en" />
       </div>
       <div className="src-x">
-        <ExpressionField state={x} onChange={(x) => dispatch($.src.set(id, 'x', x))} intro={<TbAxisX />}>m</ExpressionField>
+        <ExpressionField state={x} onChange={(x) => dispatch($.src.set(id, 'x', x))} intro={<TbAxisX />} data-tooltip="sources.x">m</ExpressionField>
       </div>
       <div className="src-y">
-        <ExpressionField state={y} onChange={(y) => dispatch($.src.set(id, 'y', y))} intro={<TbAxisY />}>m</ExpressionField>
+        <ExpressionField state={y} onChange={(y) => dispatch($.src.set(id, 'y', y))} intro={<TbAxisY />} data-tooltip="sources.y">m</ExpressionField>
       </div>
       <div className="src-angle">
-        <ExpressionField state={angle} onChange={(angle) => dispatch($.src.set(id, 'angle', angle))} intro={<RxAngle />}>°</ExpressionField>
+        <ExpressionField state={angle} onChange={(angle) => dispatch($.src.set(id, 'angle', angle))} intro={<RxAngle />} data-tooltip="sources.angle">°</ExpressionField>
       </div>
       <div className="src-width">
-        <ExpressionField state={width} onChange={(w) => dispatch($.src.set(id, 'width', w))} intro={<CgArrowsShrinkH />}>m</ExpressionField>
+        <ExpressionField state={width} onChange={(w) => dispatch($.src.set(id, 'width', w))} intro={<CgArrowsShrinkH />} data-tooltip="sources.width">m</ExpressionField>
       </div>
       <div className="src-height">
-        <ExpressionField state={depth} onChange={(d) => dispatch($.src.set(id, 'depth', d))} intro={<CgArrowsShrinkV />}>m</ExpressionField>
+        <ExpressionField state={depth} onChange={(d) => dispatch($.src.set(id, 'depth', d))} intro={<CgArrowsShrinkV />} data-tooltip="sources.depth">m</ExpressionField>
       </div>
       <div className="src-delay">
-        <ExpressionField state={delay} onChange={(d) => dispatch($.src.set(id, 'delay', d))} intro="𝝙t">ms</ExpressionField>
+        <ExpressionField state={delay} onChange={(d) => dispatch($.src.set(id, 'delay', d))} intro="𝝙t" data-tooltip="sources.delay">ms</ExpressionField>
       </div>
       <div className="src-gain">
-        <ExpressionField state={gain} onChange={(g) => dispatch($.src.set(id, 'gain', g))} intro={<Gain />}>dB</ExpressionField>
+        <ExpressionField state={gain} onChange={(g) => dispatch($.src.set(id, 'gain', g))} intro={<Gain />} data-tooltip="sources.gain">dB</ExpressionField>
       </div>
       <div className="src-invert">
-        <BooleanField value={invert} onChange={(i) => dispatch($.src.set(id, 'invert', i))}><TbMathAvg /></BooleanField>
+        <BooleanField value={invert} onChange={(i) => dispatch($.src.set(id, 'invert', i))} data-tooltip="sources.invert"><TbMathAvg /></BooleanField>
       </div>
       <div className="src-model">
-        <ListField value={model} options={models} onChange={(m) => dispatch($.src.set(id, 'model', m))} />
+        <ListField value={model} options={models} onChange={(m) => dispatch($.src.set(id, 'model', m))} data-tooltip="sources.model" />
       </div>
       <div className="src-rm">
         <Button onClick={() => dispatch($.src.del(id))} confirm="Are you sure you want to delete this source?">

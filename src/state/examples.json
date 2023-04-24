@@ -4,7 +4,7 @@
     "name": "1 sub per side",
     "created": "2023-01-05T01:55:00.000Z",
     "lastModified": "2023-01-05T01:55:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36 },
     "sources": [
       {
         "id": "00000001",
@@ -57,7 +57,7 @@
     "name": "center cluster",
     "created": "2023-01-05T01:54:00.000Z",
     "lastModified": "2023-01-05T01:54:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36, "step": 3 },
     "sources": [
       {
         "id": "00000001",
@@ -107,7 +107,7 @@
     "name": "2-element cardioid",
     "created": "2023-01-05T01:53:00.000Z",
     "lastModified": "2023-01-05T01:53:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36 },
     "sources": [
       {
         "id": "00000001",
@@ -157,7 +157,7 @@
     "name": "2-element end-fire",
     "created": "2023-01-05T01:52:00.000Z",
     "lastModified": "2023-01-05T01:52:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36 },
     "sources": [
       {
         "id": "00000001",
@@ -207,7 +207,7 @@
     "name": "horizontal cardioid stack",
     "created": "2023-01-05T01:51:00.000Z",
     "lastModified": "2023-01-05T01:51:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36 },
     "sources": [
       {
         "id": "00000001",
@@ -270,7 +270,7 @@
     "name": "sub in corner",
     "created": "2023-01-05T01:50:00.000Z",
     "lastModified": "2023-01-05T01:50:00.000Z",
-    "simulation": { "frequency": 60, "gain": 0, "range": 54 },
+    "simulation": { "frequency": 60, "gain": 0, "range": 36 },
     "sources": [
       {
         "id": "00000001",
@@ -312,8 +312,8 @@
     ],
     "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
     "variables": {
-      "x": { "min": 0, "max": 25, "value": 1, "quick": true },
-      "y": { "min": 0, "max": 25, "value": 1, "quick": true }
+      "x": { "min": 0, "max": 20, "value": 1, "quick": true },
+      "y": { "min": 0, "max": 20, "value": 1, "quick": true }
     }
   }
 ]

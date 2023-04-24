@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { FC, ReactNode, useState } from 'react';
 import {
   T_IDENTIFIER,
@@ -16,22 +17,24 @@ export type ExpressionFieldProps = Children & {
   disabled?: boolean;
   className?: string;
   intro?: ReactNode;
+  'data-tooltip'?: string;
 };
 
-export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, className, intro, children, ...props }) => {
+export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, className, intro, children, ['data-tooltip']: tt, ...props }) => {
   const [focus, setFocus] = useState(false);
   const value = Number.isNaN(state.value) ? '?' : state.value.toFixed(2).replace(/\.?0+$/, '');
-  const tooltip = !state.error && state.source !== value;
+  const complex = !state.error && state.source !== value;
 
   return (
     <Field
       type="expression"
-      className={className}
+      className={classNames(className, complex && 'field-expression-complex')}
       error={state.error}
       intro={intro}
       addon={children}
-      tooltip={tooltip && (focus ? value : highlight(state.source))}
-      forceTooltip={focus && tooltip}>
+      tooltip={complex && (focus ? value : highlight(state.source))}
+      forceTooltip={focus && complex}
+      data-tooltip={tt}>
       <div className="field-expression-editor">
         <input
           type="text"

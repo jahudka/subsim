@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { BottomPanel } from './bottomPanel';
+import { Help } from './help';
 import { Legend } from './legend';
 import { StateProvider } from './stateProvider';
 import { Plot } from './plot';
@@ -13,5 +14,6 @@ export const App: FC = () => (
     <BottomPanel />
     <TopPanel />
     <Legend />
+    <Help />
   </StateProvider>
 );

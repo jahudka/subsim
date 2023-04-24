@@ -1,5 +1,5 @@
 import { Line, Source, SourceModel } from '../state';
-import { dbToGain, distance, gainToDb, rad } from '../utils';
+import { distance, gainToDb, rad } from '../utils';
 
 export type Arrival = {
   gain: number;
@@ -69,7 +69,7 @@ export class ArrivalMap {
         && existing.y.value === wall.y.value
         && existing.angle.value === wall.angle.value
       ) {
-        this.toggleWallEnabled(existing, wall.reflect);
+        this.mergeWallIntoExisting(wall, existing);
         return;
       } else {
         this.deleteWall(existing);
@@ -147,9 +147,13 @@ export class ArrivalMap {
 
   private mergeSourceIntoExisting(source: Source, existing: Source): void {
     this.mergeSourceProps(source, existing);
+    existing.enabled ? this.active.add(existing) : this.active.delete(existing);
 
-    for (const reflection of this.reflections.get(source.id)?.values() ?? []) {
+    for (const [wallId, reflection] of this.reflections.get(source.id) ?? []) {
       this.mergeSourceProps(source, reflection);
+
+      const wall = this.walls.get(wallId);
+      wall?.reflect && existing.enabled ? this.active.add(existing) : this.active.delete(existing);
     }
   }
 
@@ -160,18 +164,20 @@ export class ArrivalMap {
     existing.delay = source.delay;
     existing.invert = source.invert;
     existing.enabled = source.enabled;
-    existing.enabled ? this.active.add(existing) : this.active.delete(existing);
   }
 
-  private toggleWallEnabled(wall: Line, enabled: boolean): void {
-    wall.reflect = enabled;
+  private mergeWallIntoExisting(wall: Line, existing: Line): void {
+    existing.reflect = wall.reflect;
+    existing.absorption.value = wall.absorption.value;
 
-    for (const reflections of this.reflections.values()) {
-      const reflection = reflections.get(wall.id);
+    for (const [sourceId, reflections] of this.reflections) {
+      const source = this.sources.get(sourceId);
+      const reflection = reflections.get(existing.id);
 
-      if (reflection) {
-        enabled ? this.active.add(reflection) : this.active.delete(reflection);
-        reflection.enabled = enabled;
+      if (source && reflection) {
+        reflection.gain.value = this.computeReflectedSourceGain(source.gain.value, existing.absorption.value);
+        existing.reflect && source.enabled ? this.active.add(reflection) : this.active.delete(reflection);
+        this.arrivals.delete(reflection.id);
       }
     }
   }
@@ -204,18 +210,24 @@ export class ArrivalMap {
     const b2 = b ** 2;
     const x = (p * (a2 - b2) - 2 * b * (a * q + c)) / (a2 + b2);
     const y = (q * (b2 - a2) - 2 * a * (b * p + c)) / (a2 + b2);
-    const absorption = wall.absorption.value >= 0 ? Math.sqrt(1 - wall.absorption.value) : dbToGain(wall.absorption.value);
-    const gain = dbToGain(source.gain.value);
+    const gain = this.computeReflectedSourceGain(source.gain.value, wall.absorption.value);
     const reflection: Source = {
       ...source,
       id: `${source.id}@${wall.id}`,
       x: { value: x, source: '' },
       y: { value: y, source: '' },
       angle: { value: -source.angle.value + 2 * wall.angle.value, source: '' },
-      gain: { value: gainToDb(gain * absorption), source: '' },
+      gain: { value: gain, source: '' },
     };
 
     wall.reflect && source.enabled && this.active.add(reflection);
     return reflection;
+  }
+
+  private computeReflectedSourceGain(gain: number, absorption: number): number {
+    const absorptionGain = absorption >= 0
+      ? gainToDb(Math.sqrt(1 - Math.min(1, absorption)))
+      : absorption;
+    return gain + absorptionGain;
   }
 }

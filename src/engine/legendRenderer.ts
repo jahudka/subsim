@@ -45,7 +45,7 @@ export class LegendRenderer {
     this.ctx.clearRect(0, 0, this.width, this.height);
     this.ctx.textAlign = 'right';
     this.ctx.textBaseline = 'middle';
-    this.ctx.font = '10px/1 "Source Sans Pro"';
+    this.ctx.font = '10px/1 "Source Sans Pro", sans-serif';
 
     const { width: tw } = this.ctx.measureText('+00 dB');
     const vpad = 10;
@@ -59,7 +59,7 @@ export class LegendRenderer {
 
       if (gain <= tick) {
         this.ctx.fillStyle = '#555';
-        this.ctx.fillText(`${tick} dB`, this.width, y + 2 + vpad);
+        this.ctx.fillText(`${tick} dB`, this.width, y + 1 + vpad);
         tick -= 6;
       }
     }

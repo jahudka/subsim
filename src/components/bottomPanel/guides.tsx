@@ -53,27 +53,27 @@ const RectUi: FC<Rect> = ({
     <div className="row-wrap guide-rect">
       <div className="guide-kind">rect</div>
       <div className="guide-x">
-        <ExpressionField state={x} onChange={(x) => dispatch($.guide.set(id, 'x', x))} intro={<TbAxisX />}>m</ExpressionField>
+        <ExpressionField state={x} onChange={(x) => dispatch($.guide.set(id, 'x', x))} intro={<TbAxisX />} data-tooltip="guides.x">m</ExpressionField>
       </div>
       <div className="guide-y">
-        <ExpressionField state={y} onChange={(y) => dispatch($.guide.set(id, 'y', y))} intro={<TbAxisY />}>m</ExpressionField>
+        <ExpressionField state={y} onChange={(y) => dispatch($.guide.set(id, 'y', y))} intro={<TbAxisY />} data-tooltip="guides.y">m</ExpressionField>
       </div>
       <div className="guide-angle">
-        <ExpressionField state={angle} onChange={(angle) => dispatch($.guide.set(id, 'angle', angle))} intro={<RxAngle />}>°</ExpressionField>
+        <ExpressionField state={angle} onChange={(angle) => dispatch($.guide.set(id, 'angle', angle))} intro={<RxAngle />} data-tooltip="guides.angle">°</ExpressionField>
       </div>
       <div className="guide-width">
-        <ExpressionField state={width} onChange={(w) => dispatch($.guide.set(id, 'width', w))} intro={<CgArrowsShrinkH />}>m</ExpressionField>
+        <ExpressionField state={width} onChange={(w) => dispatch($.guide.set(id, 'width', w))} intro={<CgArrowsShrinkH />} data-tooltip="guides.width">m</ExpressionField>
       </div>
       <div className="guide-height">
-        <ExpressionField state={height} onChange={(d) => dispatch($.guide.set(id, 'height', d))} intro={<CgArrowsShrinkV />}>m</ExpressionField>
+        <ExpressionField state={height} onChange={(d) => dispatch($.guide.set(id, 'height', d))} intro={<CgArrowsShrinkV />} data-tooltip="guides.height">m</ExpressionField>
       </div>
       <div className="guide-spacer"></div>
       <div className="guide-spacer"></div>
       <div className="guide-color">
-        <ColorField value={color} onChange={(c) => dispatch($.guide.set(id, 'color', c))} intro={<IoIosColorPalette />} />
+        <ColorField value={color} onChange={(c) => dispatch($.guide.set(id, 'color', c))} intro={<IoIosColorPalette />} data-tooltip="guides.color" />
       </div>
       <div className="guide-label">
-        <StringField value={label ?? ''} onChange={(l) => dispatch($.guide.set(id, 'label', l))} intro={<TbTag />} />
+        <StringField value={label ?? ''} onChange={(l) => dispatch($.guide.set(id, 'label', l))} intro={<TbTag />} data-tooltip="guides.label" />
       </div>
       <div className="guide-rm">
         <Button onClick={() => dispatch($.guide.del(id))} confirm="Are you sure you want to delete this guide?">
@@ -102,27 +102,27 @@ const LineUi: FC<Line> = ({
     <div className="row-wrap guide-line">
       <div className="guide-kind">line</div>
       <div className="guide-x">
-        <ExpressionField state={x} onChange={(x) => dispatch($.guide.set(id, 'x', x))} intro={<TbAxisX />}>m</ExpressionField>
+        <ExpressionField state={x} onChange={(x) => dispatch($.guide.set(id, 'x', x))} intro={<TbAxisX />} data-tooltip="guides.x">m</ExpressionField>
       </div>
       <div className="guide-y">
-        <ExpressionField state={y} onChange={(y) => dispatch($.guide.set(id, 'y', y))} intro={<TbAxisY />}>m</ExpressionField>
+        <ExpressionField state={y} onChange={(y) => dispatch($.guide.set(id, 'y', y))} intro={<TbAxisY />} data-tooltip="guides.y">m</ExpressionField>
       </div>
       <div className="guide-angle">
-        <ExpressionField state={angle} onChange={(angle) => dispatch($.guide.set(id, 'angle', angle))} intro={<RxAngle />}>°</ExpressionField>
+        <ExpressionField state={angle} onChange={(angle) => dispatch($.guide.set(id, 'angle', angle))} intro={<RxAngle />} data-tooltip="guides.angle">°</ExpressionField>
       </div>
       <div className="guide-spacer"></div>
       <div className="guide-spacer"></div>
       <div className="guide-reflect">
-        <BooleanField value={reflect} onChange={(r) => dispatch($.guide.set(id, 'reflect', r as any))}><VscMirror /></BooleanField>
+        <BooleanField value={reflect} onChange={(r) => dispatch($.guide.set(id, 'reflect', r as any))} data-tooltip="guides.reflect"><VscMirror /></BooleanField>
       </div>
       <div className="guide-absorption">
-        <ExpressionField state={absorption} onChange={(d) => dispatch($.guide.set(id, 'absorption', d))} intro={<TbAlpha />} />
+        <ExpressionField state={absorption} onChange={(d) => dispatch($.guide.set(id, 'absorption', d))} intro={<TbAlpha />} data-tooltip="guides.absorption" />
       </div>
       <div className="guide-color">
-        <ColorField value={color} onChange={(c) => dispatch($.guide.set(id, 'color', c))} intro={<IoIosColorPalette />} />
+        <ColorField value={color} onChange={(c) => dispatch($.guide.set(id, 'color', c))} intro={<IoIosColorPalette />} data-tooltip="guides.color" />
       </div>
       <div className="guide-label">
-        <StringField value={label ?? ''} onChange={(l) => dispatch($.guide.set(id, 'label', l))} intro={<TbTag />} />
+        <StringField value={label ?? ''} onChange={(l) => dispatch($.guide.set(id, 'label', l))} intro={<TbTag />} data-tooltip="guides.label" />
       </div>
       <div className="guide-rm">
         <Button onClick={() => dispatch($.guide.del(id))} confirm="Are you sure you want to delete this guide?">

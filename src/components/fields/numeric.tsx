@@ -25,12 +25,12 @@ function createValidator(min?: number, max?: number) {
   };
 }
 
-export const NumericField: FC<NumericFieldProps> = ({ slider, value, onChange, className, intro, children, ...props }) => {
+export const NumericField: FC<NumericFieldProps> = ({ slider, value, onChange, className, intro, children, ['data-tooltip']: tt, ...props }) => {
   const validate = useMemo(() => createValidator(props.min, props.max), [props.min, props.max]);
   const [state, handleChange] = useField(value, onChange, { validate })
 
   return (
-    <Field type={slider ? 'range' : 'numeric'} className={className} error={state.error} intro={intro} addon={children}>
+    <Field type={slider ? 'range' : 'numeric'} className={className} error={state.error} intro={intro} addon={children} data-tooltip={tt}>
       <input {...props} type={slider ? 'range' : 'number'} value={state.value} onChange={handleChange} />
     </Field>
   );

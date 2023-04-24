@@ -16,7 +16,7 @@ const tabs: [string, string][] = [
 export const Tabs: FC<TabsProps> = ({ current, setCurrent }) => (
   <div id="bottom-tabs" className="row">
     {tabs.map(([id, label]) => (
-      <button key={id} onClick={() => setCurrent(id)} className={classNames('flex-min', current === id && 'current')}>{label}</button>
+      <button key={id} data-tooltip={`${id}.tab`} onClick={() => setCurrent(id)} className={classNames('flex-min', current === id && 'current')}>{label}</button>
     ))}
   </div>
 );

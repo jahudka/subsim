@@ -1,0 +1,26 @@
+#help {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    color: #fffa;
+  }
+}
+
+.rc-tooltip.rc-tooltip-help .rc-tooltip-inner {
+  max-width: calc(100vw - 90px - 49px);
+  padding: 8px 12px;
+
+  @media (min-width: 540px) {
+    max-width: 360px;
+  }
+
+  h3, p:first-child { margin-top: 0; }
+  p:last-child { margin-bottom: 0; }
+}

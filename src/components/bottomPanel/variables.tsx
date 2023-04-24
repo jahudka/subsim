@@ -35,16 +35,16 @@ const VariableUi: FC<VariableUiProps> = ({ name, min, max, value, quick }) => {
   return (
     <div className="row-wrap">
       <div className="var-quick">
-        <BooleanField value={quick} onChange={(q) => dispatch($.var.setQuick(name, q))} />
+        <BooleanField value={quick} onChange={(q) => dispatch($.var.setQuick(name, q))} data-tooltip="vars.quick" />
       </div>
       <div className="var-name"><code>{name}</code></div>
       <div className="var-range">
         <div className="row">
-          <NumericField className="flex-min ml-auto" value={min} max={max - step} onChange={(min) => dispatch($.var.add(name, min, max, value, quick))} />
+          <NumericField className="flex-min ml-auto" value={min} max={max - step} onChange={(min) => dispatch($.var.add(name, min, max, value, quick))} data-tooltip="vars.min" />
           <div className="flex-min mx-2"><FaLessThanEqual /></div>
-          <NumericField className="flex-min" value={value} min={min} max={max} step={step} onChange={(v) => dispatch($.var.set(name, v))} />
+          <NumericField className="flex-min" value={value} min={min} max={max} step={step} onChange={(v) => dispatch($.var.set(name, v))} data-tooltip="vars.value" />
           <div className="flex-min mx-2"><FaLessThanEqual /></div>
-          <NumericField className="flex-min mr-auto" value={max} min={min + step} onChange={(max) => dispatch($.var.add(name, min, max, value, quick))} />
+          <NumericField className="flex-min mr-auto" value={max} min={min + step} onChange={(max) => dispatch($.var.add(name, min, max, value, quick))} data-tooltip="vars.max" />
         </div>
       </div>
       <div className="var-value">
@@ -89,16 +89,16 @@ const AddVariableUi: FC = () => {
   return (
     <div className="row-wrap var-add">
       <div className="var-quick">
-        <BooleanField value={quick} onChange={setQuick} />
+        <BooleanField value={quick} onChange={setQuick} data-tooltip="vars.quick" />
       </div>
       <div className="var-name">
-        <StringField value={name} onChange={setName} validate={validateName} placeholder="add variable..." />
+        <StringField value={name} onChange={setName} validate={validateName} placeholder="add variable..." data-tooltip="vars.name" />
       </div>
       <div className="var-range">
         <div className="row">
-          <NumericField className="flex-min ml-auto" value={min} max={max - step} onChange={setMin} />
+          <NumericField className="flex-min ml-auto" value={min} max={max - step} onChange={setMin} data-tooltip="vars.min" />
           <div className="flex-min mx-2"><FaLessThanEqual /><em className="mx-2">v</em><FaLessThanEqual /></div>
-          <NumericField className="flex-min mr-auto" value={max} min={min + step} onChange={setMax} />
+          <NumericField className="flex-min mr-auto" value={max} min={min + step} onChange={setMax} data-tooltip="vars.max" />
         </div>
       </div>
       <div className="var-value"></div>

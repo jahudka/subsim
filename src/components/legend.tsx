@@ -7,7 +7,7 @@ export const Legend: FC = () => {
   const dispatch = useDispatch();
 
   return (
-    <div id="legend" onClick={() => dispatch($.sim.set('step', (((step ?? 0) + 3) % 9) || undefined))}>
+    <div id="legend" onClick={() => dispatch($.sim.set('step', (((step ?? 0) + 3) % 9) || undefined))} data-tooltip="ui.legend">
       <Canvas type="legend" />
     </div>
   );

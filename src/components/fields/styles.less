@@ -81,6 +81,7 @@
     position: relative;
     padding-left: 1.75em;
     min-height: 1em;
+    cursor: pointer;
 
     input {
       position: absolute;
@@ -105,10 +106,13 @@
         font: 12px/1.5 'Source Code Pro', monospace;
       }
     }
+
+    &.field-expression-complex {
+      border-bottom-color: #44f;
+    }
   }
 
   &.field-invalid {
-    z-index: 2;
     border-bottom-color: #d77;
   }
 }

@@ -12,10 +12,11 @@ export function ListField<T extends string = string>({
   className,
   intro,
   children,
+  ['data-tooltip']: tt,
   ...props
 }: ListFieldProps<T>): ReactElement<any, any> | null {
   return (
-    <Field type="list" className={className} intro={intro} addon={children}>
+    <Field type="list" className={className} intro={intro} addon={children} data-tooltip={tt}>
       <select {...props} value={options.indexOf(value)} onChange={(evt) => onChange && onChange(options[evt.target.value])}>
         {options.map((o, i) => (
           <option key={i} value={i}>{o}</option>
