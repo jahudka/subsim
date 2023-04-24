@@ -69,7 +69,7 @@ export class PlotRenderer extends EventEmitter {
       const offset = step < 2 ? 0.5 : 1;
 
       for (let y = row * step; y < this.height; y += step) {
-        if (row % 10 === 0 && Date.now() - t0 > 50) {
+        if (row % 10 === 0 && Date.now() - t0 > 25) {
           this.next = requestAnimationFrame(() => this.renderFrame(step, row, first));
           return;
         }

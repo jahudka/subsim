@@ -42,6 +42,9 @@ export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, cla
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
           value={focus ? state.source : value}
+          autoCapitalize="false"
+          autoComplete="false"
+          autoCorrect="false"
           {...props} />
       </div>
     </Field>

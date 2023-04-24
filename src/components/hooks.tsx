@@ -39,15 +39,17 @@ type DerivedStateData<S, P> = {
 export function useDerivedState<
   F extends Factory<any>,
 >(factory: F, ...params: Parameters<F>): [State<F>, Dispatch<SetStateAction<State<F>>>] {
-  const data = useRef<DerivedStateData<State<F>, Parameters<F>>>();
+  const data = useRef<DerivedStateData<State<F>, Parameters<F>>>(null as any);
   const [, update] = useState(false);
 
   if (!data.current) {
     data.current = {
       state: factory(...params),
       dispatch: state => {
-        if (data.current) {
-          data.current.state = typeof state === 'function' ? (state as any)(data.current.state) : state;
+        const next = typeof state === 'function' ? (state as any)(data.current.state) : state;
+
+        if (next !== data.current.state) {
+          data.current.state = next;
           update(v => !v);
         }
       },

@@ -9,11 +9,13 @@ export const QuickControls: FC = () => {
   const dispatch = useDispatch();
 
   return (
-    <div id="quick-controls" className="table">
-      <QuickControl name="frequency" value={frequency} min={20} max={250} onChange={(f) => dispatch($.sim.set('frequency', f))} />
-      {Object.entries(variables).map(([name, { quick, ...props }]) => quick && (
-        <QuickControl key={name} name={<code>{name}</code>} {...props} onChange={(v) => dispatch($.var.set(name, v))} />
-      ))}
+    <div id="quick-controls">
+      <div className="table">
+        <QuickControl name="frequency" value={frequency} min={20} max={250} onChange={(f) => dispatch($.sim.set('frequency', f))} />
+        {Object.entries(variables).map(([name, { quick, ...props }]) => quick && (
+          <QuickControl key={name} name={<code>{name}</code>} {...props} onChange={(v) => dispatch($.var.set(name, v))} />
+        ))}
+      </div>
     </div>
   );
 };

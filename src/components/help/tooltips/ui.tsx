@@ -7,8 +7,11 @@ export const help = () => (
     <h3>Welcome to Subsim!</h3>
     <p>
       This is a rudimentary tool for the simulation of subwoofer arrays.
-      It is intended as a learning tool,<br /><strong>not</strong> a real-world
+      It is intended as a learning tool, <strong>not</strong> a real-world
       simulator!
+    </p>
+    <p>
+      Expand the top panel to see some example projects.
     </p>
     <p>
       <a href="https://github.com/jahudka/subsim/blob/main/docs/manual.md" target="_blank">Manual</a>
