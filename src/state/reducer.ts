@@ -46,6 +46,7 @@ export function dispatchAction(state: ProjectState, action: Action): ProjectStat
     case 'load-project': return loadProject(action.id);
     case 'reload-project': return loadProject(state.id);
     case 'delete-project': return deleteProject(state, action.id);
+    case 'import-project': return importProject(action.data);
     case 'set-view': return setView(state, action.x0, action.y0, action.scale);
     case 'reset-view': return resetView(state);
     case 'show-context':
@@ -126,6 +127,10 @@ function initProject(project: Project): ProjectState {
 function deleteProject(state: ProjectState, id: string): ProjectState {
   manager.delete(id);
   return { ...state };
+}
+
+function importProject(data: any): ProjectState {
+  return initProject(manager.import(data));
 }
 
 function setView(state: ProjectState, x0: number, y0: number, scale: number): ProjectState {

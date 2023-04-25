@@ -1,8 +1,10 @@
 import { Guide, SimulationOptions, Source, ViewState } from '../state';
 import { EventEmitter } from './eventEmitter';
+import { Exporter } from './exporter';
 import { EngineInterface } from './types';
 
 export class ProxyEngine extends EventEmitter implements EngineInterface {
+  private readonly exporter: Exporter = new Exporter();
   private readonly worker = new Worker(
     new URL('./worker.ts', import.meta.url),
     { type: 'module' },
@@ -18,6 +20,7 @@ export class ProxyEngine extends EventEmitter implements EngineInterface {
   }
 
   setCanvas(type: 'plot' | 'ui' | 'context' | 'legend', canvasEl: HTMLCanvasElement): void {
+    this.exporter.setCanvas(type, canvasEl);
     const canvas = canvasEl.transferControlToOffscreen();
     this.worker.postMessage({ action: 'set-canvas', type, canvas }, [canvas]);
   }
@@ -60,6 +63,10 @@ export class ProxyEngine extends EventEmitter implements EngineInterface {
 
   renderContext(x: number, y: number): void {
     this.worker.postMessage({ action: 'ctx', x, y });
+  }
+
+  exportOnto(ctx: CanvasRenderingContext2D, ui?: boolean, legend?: boolean): void {
+    this.exporter.exportImageOnto(ctx, ui, legend);
   }
 
   private handleMessage(evt: MessageEvent): void {

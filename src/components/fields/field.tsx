@@ -40,7 +40,7 @@ export const Field: FC<FieldProps> = ({ type, className, error, intro, addon, to
       trigger={hasError || forceTooltip ? [] : ['focus', 'hover']}
       visible={hasError || forceTooltip ? true : !hasTooltip ? false : undefined}
       mouseLeaveDelay={0}
-      destroyTooltipOnHide={true}>
+      destroyTooltipOnHide>
       <div className={classNames('field', type && `field-${type}`, error && 'field-invalid', className)} {...data}>
         {intro && <span className="field-addon">{intro}</span>}
         {children}

@@ -5,6 +5,7 @@ import { ProjectInfo } from '../../state';
 import { Button } from '../button';
 import { useCurrent } from '../hooks';
 import { $, useDispatch, useProjectInfo, useProjectList } from '../stateProvider';
+import { ImportProject } from './import';
 
 export type ProjectListProps = {
   close?: () => void;
@@ -34,8 +35,9 @@ export const ProjectList: FC<ProjectListProps> = ({ close }) => {
     <div className="project-list">
       <div className="row">
         <h2 className="flex-max">Projects:</h2>
+        <ImportProject />
         <button className="flex-min" onClick={create}>
-          <FaFolderPlus />
+          <FaFolderPlus /> new
         </button>
       </div>
       {projects.map((project) => (

@@ -3,7 +3,7 @@ import {
   Dispatch,
   MutableRefObject,
   SetStateAction,
-  useContext,
+  useContext, useEffect,
   useRef,
   useState,
 } from 'react';
@@ -65,4 +65,35 @@ export function useDerivedState<
 
 function depsChanged<P>(a: P[], b: P[]): boolean {
   return a.some((v, i) => v !== b[i]);
+}
+
+
+export function useDismissableUi(dismiss: () => void, active: boolean, selector?: string): void {
+  const dismissFn = useCurrent(dismiss);
+
+  useEffect(() => {
+    if (!active) {
+      return () => {};
+    }
+
+    const handleEsc = (evt: KeyboardEvent) => {
+      if (evt.key === 'Escape') {
+        dismissFn.current();
+      }
+    };
+
+    const handleMouse = (evt: MouseEvent) => {
+      if (!(evt.target as any).closest(selector)) {
+        dismissFn.current();
+      }
+    };
+
+    document.body.addEventListener('keydown', handleEsc);
+    selector && document.body.addEventListener('mousedown', handleMouse);
+
+    return () => {
+      document.body.removeEventListener('keydown', handleEsc);
+      selector && document.body.removeEventListener('mousedown', handleMouse);
+    };
+  }, [active, dismissFn]);
 }

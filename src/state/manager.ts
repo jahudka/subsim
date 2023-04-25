@@ -75,6 +75,15 @@ export class ProjectManager {
     return safeDeepClone(project);
   }
 
+  import(data: any): Project {
+    // todo validate project data & apply migrations
+    data.id = randomKey(this.projects);
+    data.created = new Date();
+    data.lastModified = new Date();
+    this.projects.unshift(data);
+    return this.hydrateData(safeDeepClone(data));
+  }
+
   private readStorage(): Project[] {
     const projects: RawProject[] = migrate(JSON.parse(localStorage.getItem('projects') ?? '[]'));
     return projects

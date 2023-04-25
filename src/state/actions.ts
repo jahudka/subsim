@@ -43,6 +43,11 @@ export type DeleteProjectAction = {
   id: string;
 };
 
+export type ImportProjectAction = {
+  type: 'import-project';
+  data: any;
+};
+
 export type SetViewAction = {
   type: 'set-view';
   x0: number;
@@ -145,6 +150,7 @@ export type Action =
   | LoadProjectAction
   | ReloadProjectAction
   | DeleteProjectAction
+  | ImportProjectAction
   | SetViewAction
   | ResetViewAction
   | ShowContextAction
@@ -177,6 +183,9 @@ const proj = {
   },
   del(id: string): DeleteProjectAction {
     return { type: 'delete-project', id };
+  },
+  import(data: any): ImportProjectAction {
+    return { type: 'import-project', data };
   },
 };
 

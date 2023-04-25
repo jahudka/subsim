@@ -15,11 +15,13 @@ import {
   VariableMap,
   LocalVariableMap,
   ViewState,
+  ProjectState,
 } from '../state';
 
 export { $ } from '../state';
 
 const Dispatch = createContext<Dispatch<Action> | undefined>(undefined);
+const Project = createContext<ProjectState | undefined>(undefined);
 const ProjectList = createContext<ProjectInfo[] | undefined>(undefined);
 const ProjectInfo = createContext<ProjectInfo | undefined>(undefined);
 const Sim = createContext<SimulationOptions | undefined>(undefined);
@@ -36,6 +38,10 @@ export function useDispatch(): Dispatch<Action> {
 
 export function useEngine(): EngineInterface {
   return engine;
+}
+
+export function useProject(): ProjectState {
+  return useContextSafely(Project);
 }
 
 export function useProjectInfo(): ProjectInfo {
@@ -75,23 +81,25 @@ export const StateProvider: FC<Children> = ({ children }) => {
 
   return (
     <Dispatch.Provider value={dispatch}>
-      <ProjectInfo.Provider value={project}>
-        <ProjectList.Provider value={getProjectList()}>
-          <View.Provider value={project.view}>
-            <Sim.Provider value={project.simulation}>
-              <Sources.Provider value={project.sources}>
-                <Guides.Provider value={project.guides}>
-                  <Globals.Provider value={project.globals}>
-                    <Vars.Provider value={project.variables}>
-                      {children}
-                    </Vars.Provider>
-                  </Globals.Provider>
-                </Guides.Provider>
-              </Sources.Provider>
-            </Sim.Provider>
-          </View.Provider>
-        </ProjectList.Provider>
-      </ProjectInfo.Provider>
+      <Project.Provider value={project}>
+        <ProjectInfo.Provider value={project}>
+          <ProjectList.Provider value={getProjectList()}>
+            <View.Provider value={project.view}>
+              <Sim.Provider value={project.simulation}>
+                <Sources.Provider value={project.sources}>
+                  <Guides.Provider value={project.guides}>
+                    <Globals.Provider value={project.globals}>
+                      <Vars.Provider value={project.variables}>
+                        {children}
+                      </Vars.Provider>
+                    </Globals.Provider>
+                  </Guides.Provider>
+                </Sources.Provider>
+              </Sim.Provider>
+            </View.Provider>
+          </ProjectList.Provider>
+        </ProjectInfo.Provider>
+      </Project.Provider>
     </Dispatch.Provider>
   );
 };

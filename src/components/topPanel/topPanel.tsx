@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { Canvas } from '../canvas';
 import { Collapsible } from '../collapsible';
+import { useDismissableUi } from '../hooks';
 import { Panel } from '../panel';
 import { useEngine } from '../stateProvider';
 import { CurrentProject } from './currentProject';
@@ -32,6 +33,8 @@ export const TopPanel: FC = () => {
   const toggleExpand = useCallback(() => {
     setView((view) => view === 'list' ? 'default' : 'list');
   }, [setView]);
+
+  useDismissableUi(() => setView('default'), view === 'list', '#top-panel');
 
   useEffect(() => {
     const handle = () => {

@@ -2,7 +2,7 @@ import classNames from 'classnames';
 import { ReactElement, ReactNode, useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { FaCheck, FaTimes } from 'react-icons/fa';
-import { useCurrent } from './hooks';
+import { useCurrent, useDismissableUi } from './hooks';
 import { Children } from './types';
 
 export type DialogChildProps<R = any> = {
@@ -25,6 +25,8 @@ export function Dialog<R = any>({ onClose, children }: DialogProps<R>): ReactEle
     onCloseFn.current && setTimeout(onCloseFn.current.bind(null, result), 300);
   }, [setState, onCloseFn]);
   const close = useCallback(() => done(), [done]);
+
+  useDismissableUi(close, state === 'visible', '.dialog .dialog-content');
 
   useEffect(() => {
     state === 'init' && setState('visible');

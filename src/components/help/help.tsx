@@ -3,6 +3,7 @@ import { createContext, FC, ReactElement, ReactNode, useContext, useEffect, useS
 import { HiOutlineQuestionMarkCircle } from 'react-icons/hi';
 import { BooleanField } from '../fields';
 import { Children } from '../../types';
+import { useDismissableUi } from '../hooks';
 import { tooltips, renderContent } from './tooltips';
 
 import './styles.less';
@@ -18,6 +19,7 @@ export const Help: FC = () => {
   const savedState = localStorage.getItem('tooltips');
   const [active, setActive] = useState(savedState === null ? undefined : (savedState !== '0'));
   const [target, setTarget] = useState(active !== false ? 'ui.help' : undefined);
+  useDismissableUi(() => setTarget(undefined), active ?? true, '.rc-tooltip');
 
   if (active !== undefined) {
     localStorage.setItem('tooltips', active ? '1' : '0');
@@ -31,12 +33,6 @@ export const Help: FC = () => {
 
     let currentTarget: HTMLElement | undefined;
     let tmr: number | undefined;
-
-    const closeCurrent = () => {
-      tmr === undefined && setTarget(undefined);
-      clearTimeout(tmr);
-      currentTarget = tmr = undefined;
-    };
 
     const handleEnter = (evt: MouseEvent) => {
       const target = (evt.target as any) as HTMLElement;
@@ -56,32 +52,18 @@ export const Help: FC = () => {
 
     const handleLeave = (evt: MouseEvent) => {
       if (evt.target === currentTarget) {
-        closeCurrent();
-      }
-    };
-
-    const handleEsc = (evt: KeyboardEvent) => {
-      if (evt.key === 'Escape') {
-        closeCurrent();
-      }
-    };
-
-    const handleMouse = (evt: MouseEvent) => {
-      if (!(evt.target as any).closest('.rc-tooltip')) {
-        closeCurrent();
+        tmr === undefined && setTarget(undefined);
+        clearTimeout(tmr);
+        currentTarget = tmr = undefined;
       }
     };
 
     document.body.addEventListener('mouseenter', handleEnter, { capture: true });
     document.body.addEventListener('mouseleave', handleLeave, { capture: true });
-    document.body.addEventListener('keydown', handleEsc);
-    document.body.addEventListener('mousedown', handleMouse);
 
     return () => {
       document.body.removeEventListener('mouseenter', handleEnter, { capture: true });
       document.body.removeEventListener('mouseleave', handleLeave, { capture: true });
-      document.body.removeEventListener('keydown', handleEsc);
-      document.body.removeEventListener('mousedown', handleMouse);
       clearTimeout(tmr);
       currentTarget = tmr = undefined;
     };
@@ -119,7 +101,13 @@ const TooltipRenderer: FC<TooltipRendererProps> = ({ target, content, children }
 
   return (
     <>
-      <Tooltip overlay={renderContent(content)} trigger={[]} visible={true} placement="leftTop" overlayClassName="rc-tooltip-help">
+      <Tooltip
+        overlay={renderContent(content)}
+        trigger={[]}
+        visible={true}
+        placement="leftTop"
+        overlayClassName="rc-tooltip-help"
+        destroyTooltipOnHide>
         {children}
       </Tooltip>
       <style>

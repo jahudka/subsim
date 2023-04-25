@@ -120,6 +120,10 @@ export class Engine implements EngineInterface {
     this.context.render(x, y);
   }
 
+  exportOnto(ctx: CanvasRenderingContext2D, ui?: boolean, legend?: boolean): void {
+    throw new Error();
+  }
+
   on(event: 'plot-rendered', handler: () => void): void;
   on(event: 'context-rendered', handler: () => void): void;
   on(event: string, handler: () => void): void {
