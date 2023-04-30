@@ -2,8 +2,11 @@ import { manifest, version } from '@parcel/service-worker';
 
 declare var self: ServiceWorkerGlobalScope;
 
+const cacheKeyPrefix = 'subsim/';
+const cacheKey = `${cacheKeyPrefix}${version}`;
+
 async function install() {
-  const cache = await caches.open(version);
+  const cache = await caches.open(cacheKey);
   await cache.addAll(manifest.filter((path) => !/\/images\//.test(path)));
 }
 
@@ -11,7 +14,7 @@ async function activate() {
   const keys = await caches.keys();
 
   await Promise.all(
-    keys.map((key) => key !== version && caches.delete(key))
+    keys.map((key) => key.startsWith(cacheKeyPrefix) && key !== cacheKey && caches.delete(key))
   );
 }
 
