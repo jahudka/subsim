@@ -1,0 +1,4 @@
+{
+  "extends": "@parcel/config-default",
+  "namers": ["@mischnic/parcel-namer-preserve-structure", "..."]
+}

@@ -13,6 +13,9 @@ export const help = () => (
     <p>
       Expand the top panel to see some example projects.
     </p>
+    <p className="hidden-sm">
+      You can use "Add to home screen" on your phone to access Subsim even when you're offline.
+    </p>
     <p>
       <a href="https://github.com/jahudka/subsim/blob/main/docs/manual.md" target="_blank">Manual</a>
       {' | '}

@@ -1,15 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <title>Subsim</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
-    <title>Subsim</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&family=Source+Sans+Pro:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="description" content="Subsim is a minimal subwoofer array simulator useful to learn the basic concepts behind subwoofer array configuration.">
+    <meta name="keywords" content="subwoofer,subwoofer array,speaker,speaker array,simulator">
+    <link rel="manifest" href="./subsim.webmanifest">
+    <link rel="apple-touch-icon" sizes="57x57" href="./images/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="./images/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="./images/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="./images/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="./images/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="./images/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="./images/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="./images/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="./images/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192"  href="./images/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="./images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+    <link rel="shortcut icon" href="./images/favicon.ico">
+    <meta name="theme-color" content="#222222">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="msapplication-TileColor" content="#222222">
+    <meta name="msapplication-TileImage" content="./images/ms-icon-144x144.png">
+    <meta property="og:title" content="Subsim">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jahudka.github.io/subsim/">
+    <meta property="og:image" content="./images/og.jpg">
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="./index.tsx"></script>
+
+    <h1>Welcome to Subsim!</h1>
+    <p>
+      This tool is a bare-bones theoretical simulator of how multiple subwoofers should sum
+      in a given open area. It allows you to place different sources of audio on a 2D plane
+      and adjust their settings, such as gain, phase flip, or delay; the plot will show you
+      how the audio would propagate through the area and what the resulting amplitude
+      at each point should be. If you hover over the plot, the tool will show you a readout
+      of the predicted SPL, as well as a visualisation of the relative arrival times and
+      gains at that point in space.
+    </p>
+    <p>
+      If you see this text, it means Subsim probably doesn't work in your browser.
+      Please try updating to a more modern browser, such as a recent version of Firefox
+      or Chrome, which are known to work without issues.
+    </p>
   </body>
 </html>

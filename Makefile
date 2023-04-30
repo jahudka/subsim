@@ -3,7 +3,7 @@ default: build
 
 .PHONY: clean
 clean:
-	rm -f public/*
+	rm -rf public/*
 
 .PHONY: build
 build: clean
