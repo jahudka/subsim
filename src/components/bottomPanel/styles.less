@@ -1,9 +1,13 @@
 #bottom-panel {
   position: absolute;
-  bottom: 15px;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
   align-items: flex-start;
+
+  @media (min-width: 768px) {
+    bottom: 15px;
+  }
 
   .switch-item {
     max-height: 50vh;

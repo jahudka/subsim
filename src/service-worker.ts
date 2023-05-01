@@ -5,12 +5,26 @@ declare var self: ServiceWorkerGlobalScope;
 const cacheKeyPrefix = 'subsim/';
 const cacheKey = `${cacheKeyPrefix}${version}`;
 
-async function install() {
+async function install(evt: ExtendableEvent) {
+  self.skipWaiting();
+  evt.waitUntil(cacheAssets());
+}
+
+async function activate(evt: ExtendableEvent) {
+  evt.waitUntil(self.clients.claim());
+  evt.waitUntil(purgeStaleCache());
+}
+
+async function handleRequest(evt: FetchEvent) {
+  evt.respondWith(fetchFromCache(evt.request));
+}
+
+async function cacheAssets() {
   const cache = await caches.open(cacheKey);
   await cache.addAll(manifest.filter((path) => !/\/images\//.test(path)));
 }
 
-async function activate() {
+async function purgeStaleCache() {
   const keys = await caches.keys();
 
   await Promise.all(
@@ -23,6 +37,6 @@ async function fetchFromCache(request: Request): Promise<Response> {
   return cachedResponse || fetch(request);
 }
 
-self.addEventListener('install', (evt) => evt.waitUntil(install()));
-self.addEventListener('activate', (evt) => evt.waitUntil(activate()));
-self.addEventListener('fetch', (evt) => evt.respondWith(fetchFromCache(evt.request)));
+self.addEventListener('install', install);
+self.addEventListener('activate', activate);
+self.addEventListener('fetch', handleRequest);
