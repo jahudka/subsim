@@ -6,7 +6,6 @@ import {
   ReactNode,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import { HiOutlineQuestionMarkCircle } from 'react-icons/hi';
@@ -28,7 +27,6 @@ export const Help: FC = () => {
   const savedState = localStorage.getItem('tooltips');
   const [active, setActive] = useState(savedState === null ? undefined : (savedState !== '0'));
   const [target, setTarget] = useState(active !== false ? 'ui.help' : undefined);
-  const touch = useRef(false);
   useDismissableUi(() => setTarget(undefined), active ?? true, '.rc-tooltip');
 
   if (active !== undefined) {
@@ -77,7 +75,7 @@ export const Help: FC = () => {
       clearTimeout(tmr);
       currentTarget = tmr = undefined;
     };
-  }, [active, setTarget, touch]);
+  }, [active, setTarget]);
 
   return (
     <HelpContext.Provider value={{ active, setActive }}>
