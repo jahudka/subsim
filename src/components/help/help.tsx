@@ -44,10 +44,8 @@ export const Help: FC = () => {
     let currentTarget: HTMLElement | undefined;
     let tmr: number | undefined;
 
-    const checkTarget = (target?: HTMLElement | null) => {
-      if (!target) {
-        return;
-      }
+    const handleEnter = (evt: MouseEvent) => {
+      const target = evt.target as any;
 
       if (target.dataset.tooltip && target.dataset.tooltip in tooltips) {
         clearTimeout(tmr);
@@ -62,10 +60,6 @@ export const Help: FC = () => {
       }
     };
 
-    const handleEnter = (evt: MouseEvent) => {
-      checkTarget(evt.target as any);
-    };
-
     const handleLeave = (evt: MouseEvent) => {
       if (evt.target === currentTarget) {
         tmr === undefined && setTarget(undefined);
@@ -74,55 +68,12 @@ export const Help: FC = () => {
       }
     };
 
-    const handleTouchStart = (evt: TouchEvent) => {
-      if (!touch.current) {
-        document.body.removeEventListener('mouseenter', handleEnter, { capture: true });
-        document.body.removeEventListener('mouseleave', handleLeave, { capture: true });
-        touch.current = true;
-
-        clearTimeout(tmr);
-        currentTarget = tmr = undefined;
-      }
-
-      if (evt.touches.length === 1) {
-        setTarget(undefined);
-        checkTarget((evt.target as any).closest('[data-tooltip]'));
-      }
-    };
-
-    const handleTouchEnd = (evt: TouchEvent) => {
-      if (evt.touches.length !== 0) {
-        return;
-      }
-
-      const target = (evt.target as any).closest('[data-tooltip]');
-
-      if (target === currentTarget) {
-        if (tmr !== undefined) {
-          clearTimeout(tmr);
-          currentTarget = tmr = undefined;
-        } else {
-          evt.preventDefault();
-        }
-      }
-    };
-
-    if (!touch.current) {
-      document.body.addEventListener('mouseenter', handleEnter, { capture: true });
-      document.body.addEventListener('mouseleave', handleLeave, { capture: true });
-    }
-
-    document.body.addEventListener('touchstart', handleTouchStart, { capture: true });
-    document.body.addEventListener('touchend', handleTouchEnd, { capture: true });
+    document.body.addEventListener('mouseenter', handleEnter, { capture: true });
+    document.body.addEventListener('mouseleave', handleLeave, { capture: true });
 
     return () => {
-      if (!touch.current) {
-        document.body.removeEventListener('mouseenter', handleEnter, { capture: true });
-        document.body.removeEventListener('mouseleave', handleLeave, { capture: true });
-      }
-
-      document.body.removeEventListener('touchstart', handleTouchStart, { capture: true });
-      document.body.removeEventListener('touchend', handleTouchEnd, { capture: true });
+      document.body.removeEventListener('mouseenter', handleEnter, { capture: true });
+      document.body.removeEventListener('mouseleave', handleLeave, { capture: true });
       clearTimeout(tmr);
       currentTarget = tmr = undefined;
     };
