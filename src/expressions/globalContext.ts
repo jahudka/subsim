@@ -20,6 +20,7 @@ export class GlobalContext extends Context {
     this.functions.set('acos', (value: number) => deg(Math.acos(value)));
     this.functions.set('atan', (value: number) => deg(Math.atan(value)));
     this.functions.set('atan2', (y: number, x: number) => deg(Math.atan2(y, x)));
+    this.functions.set('sqrt', (value: number) => Math.sqrt(value));
     this.functions.set('deg', deg);
     this.functions.set('rad', rad);
   }
