@@ -10,7 +10,7 @@ export class LegendRenderer {
   private step?: number;
 
   constructor() {
-    this.render = this.render.bind(this);
+    this.renderFrame = this.renderFrame.bind(this);
   }
 
   setContext(ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D): void {
@@ -24,6 +24,7 @@ export class LegendRenderer {
     if (this.ctx) {
       this.width = this.ctx.canvas.width = width;
       this.height = this.ctx.canvas.height = height;
+      this.render();
     }
   }
 
@@ -31,12 +32,16 @@ export class LegendRenderer {
     if (range !== this.range || step !== this.step) {
       this.range = range;
       this.step = step;
-      this.frame !== undefined && cancelAnimationFrame(this.frame);
-      this.frame = requestAnimationFrame(this.render);
+      this.render();
     }
   }
 
   private render(): void {
+    this.frame !== undefined && cancelAnimationFrame(this.frame);
+    this.frame = requestAnimationFrame(this.renderFrame);
+  }
+
+  private renderFrame(): void {
     this.frame = undefined;
 
     if (!this.ctx) {
