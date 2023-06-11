@@ -29,6 +29,11 @@ You can also create your own projects. They will be saved in your browser for
 later use, but beware that there is no autosave function - remember to hit the
 "Save" button in the top panel when you're happy with your settings!
 
+Projects can be exported using the export button at the top right of the screen,
+either as an image, or as a JSON data file which you can share with others who
+can then load it back into the app. Exported data files can be imported using
+the "Import" button in the project list.
+
 ### Building blocks
 
 #### Sources
@@ -42,15 +47,16 @@ Guides are visual helpers you can use to help you visualise the space in which
 you're working - you can e.g. add a stage or an FOH and similar things.
 Guides don't affect the simulation - with one exception: _line_ guides can be
 configured to produce mirror images of the sources, which allows you to simulate
-the effects of first reflections. See below for more info on that.
+the effects of first reflections. See the [parameter reference](params.md) for
+more info.
 
 #### Expressions
 
-All numeric parameters of both _sources_ and _guides_ can actually be
-represented using an _expression_, rather than just a number. Expressions can
-contain _variables_, like `$c` for the speed of sound, but you can also define
-your own variables. There is also a number of _functions_ you can call in
-expressions - see below for a reference. This allows you to e.g. define a
+All numeric parameters of both _sources_ and _guides_ can be represented using
+an _expression_, rather than just a number. Expressions can contain _variables_,
+like `$c` for the speed of sound, but you can also define your own variables.
+There is also a number of _functions_ you can call in expressions - see the
+[expressions reference](expressions.md). This allows you to e.g. define a
 variable representing the frequency for which you're tuning your array and then
 specify all the spatial offsets and time delays of your sources as a function of
 that frequency - meaning that if you want to try a different frequency, you just
