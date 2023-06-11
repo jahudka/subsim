@@ -6,6 +6,7 @@ import {
   ReactNode,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { HiOutlineQuestionMarkCircle } from 'react-icons/hi';
@@ -27,7 +28,13 @@ export const Help: FC = () => {
   const savedState = localStorage.getItem('tooltips');
   const [active, setActive] = useState(savedState === null ? undefined : (savedState !== '0'));
   const [target, setTarget] = useState(active !== false ? 'ui.help' : undefined);
-  useDismissableUi(() => setTarget(undefined), active ?? true, '.rc-tooltip');
+  const tmr = useRef<number>();
+
+  useDismissableUi(() => {
+    setTarget(undefined);
+    clearTimeout(tmr.current);
+    tmr.current = undefined;
+  }, active ?? true, '.rc-tooltip');
 
   if (active !== undefined) {
     localStorage.setItem('tooltips', active ? '1' : '0');
@@ -40,29 +47,28 @@ export const Help: FC = () => {
     }
 
     let currentTarget: HTMLElement | undefined;
-    let tmr: number | undefined;
 
     const handleEnter = (evt: MouseEvent) => {
       const target = evt.target as any;
 
       if (target.dataset.tooltip && target.dataset.tooltip in tooltips) {
-        clearTimeout(tmr);
+        clearTimeout(tmr.current);
         currentTarget = target;
-        tmr = setTimeout(() => {
-          tmr = undefined;
+        tmr.current = setTimeout(() => {
+          tmr.current = undefined;
           setTarget(target.dataset.tooltip);
         }, 1500);
       } else if (target.closest('[data-tooltip]') !== currentTarget) {
-        clearTimeout(tmr);
-        tmr = undefined;
+        clearTimeout(tmr.current);
+        tmr.current = undefined;
       }
     };
 
     const handleLeave = (evt: MouseEvent) => {
       if (evt.target === currentTarget) {
-        tmr === undefined && setTarget(undefined);
-        clearTimeout(tmr);
-        currentTarget = tmr = undefined;
+        tmr.current === undefined && setTarget(undefined);
+        clearTimeout(tmr.current);
+        currentTarget = tmr.current = undefined;
       }
     };
 
@@ -72,10 +78,10 @@ export const Help: FC = () => {
     return () => {
       document.body.removeEventListener('mouseenter', handleEnter, { capture: true });
       document.body.removeEventListener('mouseleave', handleLeave, { capture: true });
-      clearTimeout(tmr);
-      currentTarget = tmr = undefined;
+      clearTimeout(tmr.current);
+      currentTarget = tmr.current = undefined;
     };
-  }, [active, setTarget]);
+  }, [active, setTarget, tmr]);
 
   return (
     <HelpContext.Provider value={{ active, setActive }}>

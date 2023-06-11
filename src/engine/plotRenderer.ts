@@ -83,10 +83,7 @@ export class PlotRenderer extends EventEmitter {
         }
       }
 
-      if (first) {
-        this.emit('rendered');
-      }
-
+      this.emit('rendered', step);
       step /= 2;
       row = 0;
       first = false;

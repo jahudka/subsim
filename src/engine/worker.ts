@@ -2,8 +2,8 @@ import { Engine } from './engine';
 
 const engine = new Engine();
 
-engine.on('plot-rendered', () => {
-  self.postMessage({ type: 'emit', event: 'plot-rendered' });
+engine.on('plot-rendered', (resolution) => {
+  self.postMessage({ type: 'emit', event: 'plot-rendered', args: [resolution] });
 });
 
 engine.on('context-rendered', () => {

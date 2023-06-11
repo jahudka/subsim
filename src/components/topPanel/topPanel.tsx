@@ -34,6 +34,10 @@ export const TopPanel: FC = () => {
     setView((view) => view === 'list' ? 'default' : 'list');
   }, [setView]);
 
+  const closeProjectList = useCallback(() => {
+    setView((view) => view === 'list' ? 'default' : view);
+  }, [setView]);
+
   useDismissableUi(() => setView('default'), view === 'list', '#top-panel');
 
   useEffect(() => {
@@ -64,12 +68,12 @@ export const TopPanel: FC = () => {
           <div className={classNames('layer', view !== 'context' && 'active')}><CurrentProject /></div>
           <Canvas type="context" className={classNames('layer', view === 'context' && 'active')} />
         </div>
-        <button className="flex-min ml-1" onClick={toggleExpand}>
+        <button className="flex-min ml-2" onClick={toggleExpand}>
           {view !== 'list' ? <FaChevronDown /> : <FaChevronUp />}
         </button>
       </div>
       <Collapsible collapsed={view !== 'list'}>
-        <ProjectList close={toggleExpand} />
+        <ProjectList close={closeProjectList} />
       </Collapsible>
     </Panel>
   );

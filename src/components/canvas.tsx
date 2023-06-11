@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef } from 'react';
-import { useDispatch } from './stateProvider';
+import { $, useDispatch } from './stateProvider';
 
 export type CanvasProps = {
   type: 'plot' | 'ui' | 'context' | 'legend';
@@ -19,7 +19,7 @@ export const Canvas: FC<CanvasProps> = ({ type, hires, ...props }) => {
       sent.current = true;
       ref.current.width = ref.current.clientWidth * scale;
       ref.current.height = ref.current.clientHeight * scale;
-      dispatch({ type: 'set-canvas', canvasType: type, canvas: ref.current });
+      dispatch($.canvas.set(type, ref.current));
     }
   }, [ref.current, sent]);
 

@@ -4,6 +4,7 @@ export class LegendRenderer {
   private ctx: CanvasRenderingContext2D | OffscreenCanvasRenderingContext2D;
   private width: number = 0;
   private height: number = 0;
+  private textWidth?: number;
   private frame?: number;
   private range: number = 54;
   private step?: number;
@@ -47,7 +48,7 @@ export class LegendRenderer {
     this.ctx.textBaseline = 'middle';
     this.ctx.font = '10px/1 "Source Sans Pro", sans-serif';
 
-    const { width: tw } = this.ctx.measureText('+00 dB');
+    this.textWidth ??= this.ctx.measureText('+00 dB').width;
     const vpad = 10;
     const height = this.height - 2 * vpad - 1;
     let tick = 6;
@@ -55,7 +56,7 @@ export class LegendRenderer {
     for (let y = 0; y <= height; ++y) {
       const gain = 6 - this.range * (y / height);
       this.ctx.fillStyle = dbToColor(gain, this.range, this.step);
-      this.ctx.fillRect(0, y + vpad, this.width - tw - 2, 1);
+      this.ctx.fillRect(0, y + vpad, this.width - this.textWidth - 2, 1);
 
       if (gain <= tick) {
         this.ctx.fillStyle = '#555';

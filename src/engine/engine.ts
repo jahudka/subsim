@@ -124,9 +124,9 @@ export class Engine implements EngineInterface {
     throw new Error();
   }
 
-  on(event: 'plot-rendered', handler: () => void): void;
+  on(event: 'plot-rendered', handler: (resolution: number) => void): void;
   on(event: 'context-rendered', handler: () => void): void;
-  on(event: string, handler: () => void): void {
+  on(event: string, handler: (...args: any) => void): void {
     switch (event) {
       case 'plot-rendered':
         this.plot.on('rendered', handler);
@@ -137,9 +137,9 @@ export class Engine implements EngineInterface {
     }
   }
 
-  once(event: 'plot-rendered', handler: () => void): void;
+  once(event: 'plot-rendered', handler: (resolution: number) => void): void;
   once(event: 'context-rendered', handler: () => void): void;
-  once(event: string, handler: () => void): void {
+  once(event: string, handler: (...args: any) => void): void {
     switch (event) {
       case 'plot-rendered':
         this.plot.once('rendered', handler);
@@ -150,9 +150,9 @@ export class Engine implements EngineInterface {
     }
   }
 
-  off(event?: 'plot-rendered', handler?: () => void): void;
+  off(event?: 'plot-rendered', handler?: (resolution: number) => void): void;
   off(event?: 'context-rendered', handler?: () => void): void;
-  off(event?: string, handler?: () => void): void {
+  off(event?: string, handler?: (...args: any) => void): void {
     switch (event) {
       case 'plot-rendered':
         this.plot.off('rendered', handler);

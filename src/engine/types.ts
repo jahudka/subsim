@@ -13,10 +13,10 @@ export interface EngineInterface {
   render(): void;
   renderContext(x: number, y: number): void;
   exportOnto(ctx: CanvasRenderingContext2D, ui?: boolean, legend?: boolean): void;
-  on(event: 'plot-rendered', handler: () => void): void;
+  on(event: 'plot-rendered', handler: (resolution: number) => void): void;
   on(event: 'context-rendered', handler: () => void): void;
-  once(event: 'plot-rendered', handler: () => void): void;
+  once(event: 'plot-rendered', handler: (resolution: number) => void): void;
   once(event: 'context-rendered', handler: () => void): void;
-  off(event?: 'plot-rendered', handler?: () => void): void;
+  off(event?: 'plot-rendered', handler?: (resolution: number) => void): void;
   off(event?: 'context-rendered', handler?: () => void): void;
 }
