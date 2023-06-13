@@ -12,6 +12,7 @@ import {
   ProjectInfo,
   SimulationOptions,
   Source,
+  Generator,
   VariableMap,
   LocalVariableMap,
   ViewState,
@@ -26,7 +27,7 @@ const ProjectList = createContext<ProjectInfo[] | undefined>(undefined);
 const ProjectInfo = createContext<ProjectInfo | undefined>(undefined);
 const Sim = createContext<SimulationOptions | undefined>(undefined);
 const View = createContext<ViewState | undefined>(undefined);
-const Sources = createContext<Source[] | undefined>(undefined);
+const Sources = createContext<(Source | Generator)[] | undefined>(undefined);
 const Guides = createContext<Guide[] | undefined>(undefined);
 const Globals = createContext<VariableMap | undefined>(undefined);
 const Vars = createContext<LocalVariableMap | undefined>(undefined);
@@ -60,7 +61,7 @@ export function useViewState(): ViewState {
   return useContextSafely(View);
 }
 
-export function useSources(): Source[] {
+export function useSources(): (Source | Generator)[] {
   return useContextSafely(Sources);
 }
 

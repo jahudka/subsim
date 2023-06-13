@@ -1,5 +1,7 @@
 export const $expr = Symbol('$expr');
 export const $vars = Symbol('$vars');
+export const $ctx = Symbol('$ctx');
+export const $sources = Symbol('$sources');
 
 export function deg(value: number): number {
   return 180 * value / Math.PI;

@@ -1,7 +1,7 @@
-import { ArithmeticExpression } from './arithmeticExpression';
+import { BinaryExpression } from './binaryExpression';
 import { FunctionCall } from './functionCall';
 import { Literal } from './literal';
-import { Negation } from './negation';
+import { UnaryExpression } from './unaryExpression';
 import { Variable } from './variable';
 
-export type Expression = Literal | Variable | Negation | ArithmeticExpression | FunctionCall;
+export type Expression = Literal | Variable | UnaryExpression | BinaryExpression | FunctionCall;

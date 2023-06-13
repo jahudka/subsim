@@ -1,4 +1,4 @@
-import { ArithmeticExpression, Expression, FunctionCall, Literal, Negation, Variable } from './ast';
+import { BinaryExpression, Expression, FunctionCall, Literal, UnaryExpression, Variable } from './ast';
 import { ParseError } from './errors';
 import {
   T_COMMA,
@@ -28,8 +28,9 @@ const tokenNames = {
 };
 
 const operatorPrecedence = [
+  ['<', '>', '<=', '>=', '==', '!='],
   ['^'],
-  ['*', '/'],
+  ['*', '/', '%'],
   ['+', '-'],
 ];
 
@@ -92,7 +93,7 @@ export class Parser {
       for (const operators of operatorPrecedence) {
         for (let i = 1; i < n; i += 2) {
           if (operators.includes(buffer[i])) {
-            buffer.splice(i - 1, 3, new ArithmeticExpression(buffer[i - 1], buffer[i], buffer[i + 1]));
+            buffer.splice(i - 1, 3, new BinaryExpression(buffer[i - 1], buffer[i], buffer[i + 1]));
             i -= 2;
             n -= 2;
           }
@@ -120,8 +121,8 @@ export class Parser {
       } else {
         return new Variable(token[2], token[1]);
       }
-    } else if (token = stream.nextToken('-')) {
-      return new Negation(token[2], this.parseNode(stream, true));
+    } else if (token = stream.nextToken('-', '!')) {
+      return new UnaryExpression(token[2], token[1], this.parseNode(stream, true));
     } else if (need) {
       throw this.parseError(stream, 'a statement');
     } else {

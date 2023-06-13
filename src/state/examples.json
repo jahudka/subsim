@@ -8,6 +8,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "stageWidth / -2", "value": -5 },
         "y": { "source": "1", "value": 1 },
         "angle": { "source": "0", "value": 0 },
@@ -21,6 +22,7 @@
       },
       {
         "id": "00000002",
+        "kind": "source",
         "x": { "source": "stageWidth / 2", "value": 5 },
         "y": { "source": "1", "value": 1 },
         "angle": { "source": "0", "value": 0 },
@@ -46,10 +48,10 @@
         "label": "stage"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
     "variables": {
-      "stageWidth": { "min": 2, "max": 50, "value": 10, "quick": true },
-      "stageDepth": { "min": 2, "max": 50, "value": 6, "quick": true }
+      "stageWidth": { "min": 2, "max": 50, "step": 0, "value": 10, "quick": true },
+      "stageDepth": { "min": 2, "max": 50, "step": 0, "value": 6, "quick": true }
     }
   },
   {
@@ -61,6 +63,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "-0.5 - spacing / 2", "value": -0.5 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -74,6 +77,7 @@
       },
       {
         "id": "00000002",
+        "kind": "source",
         "x": { "source": "0.5 + spacing / 2", "value": 0.5 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -99,8 +103,8 @@
         "label": "stage"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "spacing": { "min": 0, "max": 10, "value": 0, "quick": true } }
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
+    "variables": { "spacing": { "min": 0, "max": 10, "step": 0, "value": 0, "quick": true } }
   },
   {
     "id": "examples/2-element-cardioid",
@@ -111,6 +115,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "180", "value": 180 },
@@ -124,6 +129,7 @@
       },
       {
         "id": "00000002",
+        "kind": "source",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "qw(f)", "value": 1.4291666666666667 },
         "angle": { "source": "0", "value": 0 },
@@ -149,8 +155,8 @@
         "label": "stage"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "f": { "min": 20, "max": 120, "value": 60, "quick": true } }
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
+    "variables": { "f": { "min": 20, "max": 120, "step": 0, "value": 60, "quick": true } }
   },
   {
     "id": "examples/2-element-end-fire",
@@ -161,6 +167,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -174,6 +181,7 @@
       },
       {
         "id": "00000002",
+        "kind": "source",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "qw(f)", "value": 1.4291666666666667 },
         "angle": { "source": "0", "value": 0 },
@@ -199,8 +207,8 @@
         "label": "stage"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
-    "variables": { "f": { "min": 20, "max": 120, "value": 60, "quick": true } }
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
+    "variables": { "f": { "min": 20, "max": 120, "step": 0, "value": 60, "quick": true } }
   },
   {
     "id": "examples/horizontal-cardioid-stack",
@@ -211,6 +219,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "-1", "value": -1 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -224,6 +233,7 @@
       },
       {
         "id": "00000002",
+        "kind": "source",
         "x": { "source": "0", "value": 0 },
         "y": { "source": "-0.6", "value": -0.6 },
         "angle": { "source": "180", "value": 180 },
@@ -237,6 +247,7 @@
       },
       {
         "id": "00000003",
+        "kind": "source",
         "x": { "source": "1", "value": 1 },
         "y": { "source": "0", "value": 0 },
         "angle": { "source": "0", "value": 0 },
@@ -262,7 +273,7 @@
         "label": "stage"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
     "variables": { }
   },
   {
@@ -274,6 +285,7 @@
     "sources": [
       {
         "id": "00000001",
+        "kind": "source",
         "x": { "source": "x + 5", "value": 6 },
         "y": { "source": "y + 5", "value": 6 },
         "angle": { "source": "45", "value": 45 },
@@ -310,10 +322,10 @@
         "label": "wall"
       }
     ],
-    "globals": { "$c": { "min": 300, "max": 400, "value": 343 } },
+    "globals": { "$c": { "min": 300, "max": 400, "step": 0, "value": 343 } },
     "variables": {
-      "x": { "min": 0, "max": 20, "value": 1, "quick": true },
-      "y": { "min": 0, "max": 20, "value": 1, "quick": true }
+      "x": { "min": 0, "max": 20, "step": 0, "value": 1, "quick": true },
+      "y": { "min": 0, "max": 20, "step": 0, "value": 1, "quick": true }
     }
   }
 ]

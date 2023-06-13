@@ -2,7 +2,7 @@ import { Context } from '../context';
 import { Expression } from './expression';
 import { Node } from './node';
 
-export class ArithmeticExpression extends Node {
+export class BinaryExpression extends Node {
   public readonly left: Expression;
   public readonly operator: string;
   public readonly right: Expression;
@@ -28,6 +28,13 @@ export class ArithmeticExpression extends Node {
       case '*': return left * right;
       case '/': return left / right;
       case '^': return left ** right;
+      case '%': return left %  right;
+      case '>': return left > right ? 1 : 0;
+      case '<': return left < right ? 1 : 0;
+      case '>=': return left >= right ? 1 : 0;
+      case '<=': return left <= right ? 1 : 0;
+      case '==': return left === right ? 1 : 0;
+      case '!=': return left !== right ? 1 : 0;
       default: throw new Error(`Unknown operator: '${this.operator}'`);
     }
   }

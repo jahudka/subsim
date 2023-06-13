@@ -72,7 +72,7 @@ export class TokenStream {
 }
 
 export function tokenize(str: string, need: boolean = true): Token[] {
-  const pattern: RegExp = /((?=[\d.])(?:0|[1-9]\d*)?(?:\.\d*)?)|([a-z$][a-z0-9_]*)|([-+*/^])|([()])|(,)|\s+/iy;
+  const pattern: RegExp = /((?=[\d.])(?:0|[1-9]\d*)?(?:\.\d*)?)|([a-z$][a-z0-9_]*)|([-+*/^%!]|[<>]=?|[!=]=)|([()])|(,)|\s+/iy;
   const tokens: Token[] = [];
   let match: RegExpExecArray | null;
   let lastPos: number = 0;

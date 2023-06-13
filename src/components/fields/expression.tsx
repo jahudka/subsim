@@ -9,20 +9,22 @@ import {
 import { ExpressionProperty } from '../../state';
 import { Children } from '../types';
 import { Field } from './field';
+import { formatNumber } from './utils';
 
 export type ExpressionFieldProps = Children & {
   id?: string;
   state: ExpressionProperty;
   onChange: (value: string) => void;
+  showValue?: boolean;
   disabled?: boolean;
   className?: string;
   intro?: ReactNode;
   'data-tooltip'?: string;
 };
 
-export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, className, intro, children, ['data-tooltip']: tt, ...props }) => {
+export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, showValue, className, intro, children, ['data-tooltip']: tt, ...props }) => {
   const [focus, setFocus] = useState(false);
-  const value = Number.isNaN(state.value) ? '?' : state.value.toFixed(2).replace(/\.?0+$/, '');
+  const value = Number.isNaN(state.value) ? '?' : formatNumber(state.value);
   const complex = !state.error && state.source !== value;
 
   return (
@@ -32,8 +34,8 @@ export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, cla
       error={state.error}
       intro={intro}
       addon={children}
-      tooltip={complex && (focus ? value : highlight(state.source))}
-      forceTooltip={focus && complex}
+      tooltip={complex && showValue !== false && (focus ? value : highlight(state.source))}
+      forceTooltip={focus && showValue !== false && complex}
       data-tooltip={tt}>
       <div className="field-expression-editor">
         <input
@@ -41,7 +43,7 @@ export const ExpressionField: FC<ExpressionFieldProps> = ({ state, onChange, cla
           onChange={(evt) => onChange(evt.target.value)}
           onFocus={() => setFocus(true)}
           onBlur={() => setFocus(false)}
-          value={focus ? state.source : value}
+          value={focus || showValue === false ? state.source : value}
           autoCapitalize="false"
           autoComplete="false"
           autoCorrect="false"

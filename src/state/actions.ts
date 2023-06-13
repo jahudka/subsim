@@ -1,9 +1,9 @@
 import {
   ExpressionProperty,
+  Generator,
   Line,
   Rect,
   SimulationOptions,
-  Source,
 } from './types';
 
 export type SetCanvasAction = {
@@ -76,6 +76,7 @@ export type SetOptionAction<O extends OptionName = any> = {
 
 export type AddSourceAction = {
   type: 'add-src';
+  kind: 'source' | 'generator';
 };
 
 export type AddGuideAction = {
@@ -85,16 +86,16 @@ export type AddGuideAction = {
 
 export type PropertyValue<O, P extends keyof O> = O[P] extends ExpressionProperty ? string : O[P];
 
-export type SourceProperty = Exclude<keyof Source, symbol | 'id'>;
+export type SourceProperty = Exclude<keyof Generator, symbol | 'id' | 'kind'>;
 
 export type SetSourcePropertyAction<P extends SourceProperty = any> = {
   type: 'set-src';
   id: string;
   name: P;
-  value: PropertyValue<Source, P>;
+  value: PropertyValue<Generator, P>;
 };
 
-export type GuideProperty = Exclude<keyof Rect | keyof Line, symbol | 'id'>;
+export type GuideProperty = Exclude<keyof Rect | keyof Line, symbol | 'id' | 'kind'>;
 
 export type SetGuidePropertyAction<P extends GuideProperty = any> = {
   type: 'set-guide';
@@ -118,9 +119,17 @@ export type AddVariableAction = {
   name: string;
   min: number;
   max: number;
+  step: number;
   value?: number;
   quick?: boolean;
   global?: boolean;
+};
+
+export type AddComputedVariableAction = {
+  type: 'add-comp-var';
+  name: string;
+  source: string;
+  quick?: boolean;
 };
 
 export type SetVariableAction = {
@@ -162,6 +171,7 @@ export type Action =
   | SetGuidePropertyAction
   | DeleteGuideAction
   | AddVariableAction
+  | AddComputedVariableAction
   | SetVariableAction
   | DeleteVariableAction
   | SetVariableQuickAction;
@@ -220,10 +230,10 @@ const sim = {
 };
 
 const src = {
-  add(): AddSourceAction {
-    return { type: 'add-src' };
+  add(kind: 'source' | 'generator'): AddSourceAction {
+    return { type: 'add-src', kind };
   },
-  set<P extends SourceProperty>(id: string, name: P, value: PropertyValue<Source, P>): SetSourcePropertyAction<P> {
+  set<P extends SourceProperty>(id: string, name: P, value: PropertyValue<Generator, P>): SetSourcePropertyAction<P> {
     return { type: 'set-src', id, name, value };
   },
   del(id: string): DeleteSourceAction {
@@ -244,8 +254,11 @@ const guide = {
 };
 
 const $var = {
-  add(name: string, min: number, max: number, value?: number, quick?: boolean, global?: boolean): AddVariableAction {
-    return { type: 'add-var', name, min, max, value, quick, global };
+  add(name: string, min: number, max: number, step: number, value?: number, quick?: boolean, global?: boolean): AddVariableAction {
+    return { type: 'add-var', name, min, max, step, value, quick, global };
+  },
+  addComp(name: string, source: string, quick?: boolean): AddComputedVariableAction {
+    return { type: 'add-comp-var', name, source, quick };
   },
   set(name: string, value: number, global?: boolean): SetVariableAction {
     return { type: 'set-var', name, value, global };

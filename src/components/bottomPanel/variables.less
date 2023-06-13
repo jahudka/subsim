@@ -14,8 +14,12 @@
   }
 
   .var-range {
-    input {
+    .field-numeric input {
       width: 4em;
+    }
+
+    .field-expression {
+      width: 23.5em;
     }
 
     @media (min-width: 1024px) {
@@ -35,6 +39,10 @@
       height: 0.65em;
       color: #555;
     }
+  }
+
+  .var-add {
+    padding: 1em 0;
   }
 
   .var-rm {
@@ -74,20 +82,6 @@
       flex: 0 0 5%;
       order: 4;
       margin-left: auto;
-    }
-
-    .var-add {
-      padding: 1em 0;
-      border-top: 1px solid #999;
-
-      .var-value {
-        display: none;
-      }
-
-      .var-range {
-        flex: 0 0 50%;
-        order: 3;
-      }
     }
 
     .field-numeric input {

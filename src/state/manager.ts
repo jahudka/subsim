@@ -66,7 +66,7 @@ export class ProjectManager {
       sources: [],
       guides: [],
       globals: {
-        $c: { min: 300, max: 400, value: 343 },
+        $c: { min: 300, max: 400, step: 0, value: 343 },
       },
       variables: {},
     };
@@ -106,6 +106,8 @@ export class ProjectManager {
 
   private hydrateData(project: Project): Project {
     for (const source of project.sources) {
+      source.kind === 'generator' && this.hydrateExpr(source.n);
+
       for (const expr of [source.x, source.y, source.angle, source.width, source.depth, source.delay, source.gain]) {
         this.hydrateExpr(expr);
       }
@@ -121,6 +123,12 @@ export class ProjectManager {
         this.hydrateExpr(guide.height);
       } else {
         this.hydrateExpr(guide.absorption);
+      }
+    }
+
+    for (const opts of Object.values(project.variables)) {
+      if ('source' in opts) {
+        this.hydrateExpr(opts);
       }
     }
 

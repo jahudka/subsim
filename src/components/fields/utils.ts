@@ -48,3 +48,7 @@ export function useField<T>(
 
   return [state, handleChange];
 }
+
+export function formatNumber(value: number): string {
+  return value.toFixed(2).replace(/\.?0+$/, '');
+}

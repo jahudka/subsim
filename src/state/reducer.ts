@@ -1,6 +1,6 @@
 import { LocalEngine, ProxyEngine } from '../engine';
 import { Context, extractVariables, GlobalContext, Literal, Parser } from '../expressions';
-import { $expr, $vars } from '../utils';
+import { $ctx, $expr, $sources, $vars } from '../utils';
 import {
   Action,
   GuideProperty,
@@ -10,7 +10,9 @@ import {
 import { ProjectManager } from './manager';
 import {
   ExpressionProperty,
+  Generator,
   Line,
+  LocalComputedVariable,
   Project,
   ProjectState,
   Rect,
@@ -53,13 +55,14 @@ export function dispatchAction(state: ProjectState, action: Action): ProjectStat
       engine.renderContext(action.x, action.y);
       return state;
     case 'set-opt': return setOption(state, action.option, action.value);
-    case 'add-src': return addSource(state);
+    case 'add-src': return addSource(state, action.kind);
     case 'set-src': return setSourceProp(state, action.id, action.name, action.value);
     case 'del-src': return deleteSource(state, action.id);
     case 'add-guide': return addGuide(state, action.kind);
     case 'set-guide': return setGuideProp(state, action.id, action.name, action.value);
     case 'del-guide': return deleteGuide(state, action.id);
-    case 'add-var': return addVar(state, action.name, action.min, action.max, action.value, action.quick, action.global);
+    case 'add-var': return addVar(state, action.name, action.min, action.max, action.step, action.value, action.quick, action.global);
+    case 'add-comp-var': return addComputedVar(state, action.name, action.source, action.quick);
     case 'set-var': return setVar(state, action.name, action.value, action.global);
     case 'del-var': return delVar(state, action.name, action.global);
     case 'set-var-quick': return setVarQuick(state, action.name, action.quick);
@@ -109,7 +112,7 @@ function initProject(project: Project): ProjectState {
   engine.clearAll();
 
   for (const source of project.sources) {
-    engine.mergeSource(source);
+    mergeSource(source);
   }
 
   for (const guide of project.guides) {
@@ -155,11 +158,10 @@ function setOption<O extends keyof SimulationOptions>(
   return { ...state, modified: true };
 }
 
-function addSource(state: ProjectState): ProjectState {
+function addSource(state: ProjectState, kind: 'source' | 'generator'): ProjectState {
   const id = randomKey(state.sources);
-  const source: Source = {
+  const commonProps = {
     id,
-    x: expr(0),
     y: expr(0),
     angle: expr(0),
     width: expr(1),
@@ -171,8 +173,12 @@ function addSource(state: ProjectState): ProjectState {
     enabled: true,
   };
 
+  const source: Source | Generator = kind === 'source'
+    ? { kind, x: expr(0), ...commonProps }
+    : { kind, n: expr(2), mode: 'center', x: toExpr('i'), ...commonProps };
+
   state.sources = [...state.sources, source];
-  engine.mergeSource(source);
+  mergeSource(source);
   return { ...state, modified: true };
 }
 
@@ -196,13 +202,13 @@ function setSourceProp<P extends SourceProperty>(
   state: ProjectState,
   id: string,
   name: P,
-  value: PropertyValue<Source, P>,
+  value: PropertyValue<Generator, P>,
 ): ProjectState {
   const [sources, source] = patch(state.sources, id, name, value);
 
   if (source) {
     state.sources = sources;
-    engine.mergeSource(source);
+    mergeSource(source, name);
     return { ...state, modified: true };
   } else {
     return state;
@@ -228,8 +234,20 @@ function setGuideProp<P extends GuideProperty>(
 }
 
 function deleteSource(state: ProjectState, id: string): ProjectState {
-  state.sources = state.sources.filter((source) => source.id !== id);
-  engine.deleteSource(id);
+  const [sources, source] = state.sources.reduce(([sources, target], src) => (
+    src.id === id ? [sources, src] : [sources.concat(src), target]
+  ), [[], undefined] as [(Source | Generator)[], Source | Generator | undefined]);
+
+  state.sources = sources;
+
+  if (source?.kind === 'generator') {
+    for (const src of source[$sources] ?? []) {
+      engine.deleteSource(src.id);
+    }
+  } else {
+    engine.deleteSource(id);
+  }
+
   return { ...state, modified: true };
 }
 
@@ -247,12 +265,23 @@ function deleteGuide(state: ProjectState, id: string): ProjectState {
 }
 
 
-function addVar(state: ProjectState, name: string, min: number, max: number, value?: number, quick: boolean = true, global?: boolean): ProjectState {
+function addVar(state: ProjectState, name: string, min: number, max: number, step: number, value?: number, quick: boolean = true, global?: boolean): ProjectState {
   const [key, map] = global ? ['globals', globals.variables] : ['variables', ctx.variables];
-  value ??= (min + max) / 2;
+  value ??= min;
   const local = global ? {} : { quick };
-  state[key] = { ...state[key], [name]: { min, max, value, ...local } };
+  state[key] = { ...state[key], [name]: { min, max, step, value, ...local } };
   map.set(name, value);
+  return checkDependencies(state, name);
+}
+
+function addComputedVar(state: ProjectState, name: string, source: string, quick: boolean = true): ProjectState {
+  const def: LocalComputedVariable = {
+    ...toExpr(source),
+    quick,
+  };
+
+  state.variables = { ...state.variables, [name]: def };
+  ctx.variables.set(name, def.value);
   return checkDependencies(state, name);
 }
 
@@ -310,7 +339,7 @@ function patch<O extends { id: string }>(items: O[], id: string, k: any, v: any)
   return [items, patched];
 }
 
-function toExpr(source: string): ExpressionProperty {
+function toExpr(source: string, context?: Context): ExpressionProperty {
   const property: ExpressionProperty = {
     source,
     value: 0,
@@ -323,17 +352,23 @@ function toExpr(source: string): ExpressionProperty {
     property.error = e.message;
   }
 
-  solve(property);
+  solve(property, context);
   return property;
 }
 
-function solve(property: ExpressionProperty): boolean {
+function cloneExpr(property: ExpressionProperty, context: Context = ctx): ExpressionProperty {
+  const dolly = { ...property };
+  solve(dolly, context);
+  return dolly;
+}
+
+function solve(property: ExpressionProperty, context: Context = ctx): boolean {
   if (!property[$expr]) {
     return false;
   }
 
   try {
-    const value = property[$expr].evaluate(ctx);
+    const value = property[$expr].evaluate(context);
 
     if (value !== property.value) {
       property.value = value;
@@ -348,19 +383,19 @@ function solve(property: ExpressionProperty): boolean {
   return false;
 }
 
-function checkDependencies(project: ProjectState, variable: string): ProjectState {
+function checkDependencies(project: ProjectState, variable: string, stack: string[] = []): ProjectState {
   let ch1 = false, ch2 = false;
 
   const sources = project.sources.map((src) => {
     let ch = false;
 
-    for (const prop of ['x', 'y', 'angle', 'width', 'depth', 'delay', 'gain']) {
-      if (src[prop][$vars].includes(variable) && solve(src[prop])) {
+    for (const prop of ['n', 'x', 'y', 'angle', 'width', 'depth', 'delay', 'gain']) {
+      if (src[prop] && src[prop][$vars].includes(variable) && (solve(src[prop]) || src.kind === 'generator')) {
         ch1 = ch = true;
       }
     }
 
-    ch && engine.mergeSource(src);
+    ch && mergeSource(src, undefined, variable);
     return ch ? { ...src } : src;
   });
 
@@ -380,5 +415,111 @@ function checkDependencies(project: ProjectState, variable: string): ProjectStat
   });
 
   ch2 && (project.guides = guides);
+
+  const vars: string[] = [];
+
+  for (const [name, opts] of Object.entries(project.variables)) {
+    if (name !== variable && 'source' in opts && opts[$vars] && opts[$vars].includes(variable)) {
+      if (stack.includes(name)) {
+        project.variables[name] = { ...opts, error: 'Cyclic dependency' };
+        vars.push(name);
+      } else if (solve(opts)) {
+        project.variables[name] = { ...opts };
+        ctx.variables.set(name, opts.value);
+        vars.push(name);
+      }
+    }
+  }
+
+  if (vars.length) {
+    project.variables = { ...project.variables };
+
+    for (const name of vars) {
+      if (!stack.includes(name)) {
+        checkDependencies(project, name, stack.concat(variable));
+      }
+    }
+  }
+
   return { ...project, modified: true };
+}
+
+function mergeSource(source: Source | Generator, prop?: string, variable?: string): void {
+  if (source.kind === 'generator') {
+    const [modified, deleted] = applyGenerator(source, prop, variable);
+
+    for (const src of modified) {
+      engine.mergeSource(src);
+    }
+
+    for (const src of deleted) {
+      engine.deleteSource(src.id);
+    }
+  } else {
+    engine.mergeSource(source);
+  }
+}
+
+function applyGenerator(generator: Generator, prop?: string, variable?: string): [modified: Source[], deleted: Source[]] {
+  generator[$ctx] ??= new Context(ctx);
+  generator[$sources] ??= [];
+
+  const count = Math.round(generator.n.value);
+  const base = getGeneratorBase(count, generator.mode);
+  const modified: Set<Source> = new Set();
+  const props = prop && prop !== 'n' && prop !== 'mode'
+    ? [prop]
+    : ['x', 'y', 'angle', 'width', 'depth', 'delay', 'gain'];
+
+  for (let i = 0; i < count; ++i) {
+    generator[$ctx].variables.set('i', i + base);
+
+    if (!generator[$sources][i]) {
+      modified.add(generator[$sources][i] = generateSource(generator, i));
+      continue;
+    }
+
+    const source = generator[$sources][i];
+
+    for (const p of props) {
+      if (typeof generator[p] === 'object') {
+        if (variable === undefined || generator[p][$vars].includes('i') || generator[p][$vars].includes(variable)) {
+          source[p].source = generator[p].source;
+          source[p][$expr] = generator[p][$expr];
+          source[p][$vars] = generator[p][$vars];
+          solve(source[p], generator[$ctx]) && modified.add(source);
+        }
+      } else if (source[p] !== generator[p]) {
+        source[p] = generator[p];
+        modified.add(source);
+      }
+    }
+  }
+
+  return [[...modified], generator[$sources].splice(count, generator[$sources].length)];
+}
+
+function getGeneratorBase(n: number, mode: 'negative' | 'center' | 'positive'): number {
+  switch (mode) {
+    case 'negative': return 1 - n;
+    case 'center': return (1 - n) / 2;
+    case 'positive': return 0;
+  }
+}
+
+function generateSource(generator: Generator, i: number): Source {
+  return {
+    id: `${generator.id}.${i}`,
+    kind: 'source',
+    x: cloneExpr(generator.x, generator[$ctx]),
+    y: cloneExpr(generator.y, generator[$ctx]),
+    angle: cloneExpr(generator.angle, generator[$ctx]),
+    width: cloneExpr(generator.width, generator[$ctx]),
+    depth: cloneExpr(generator.depth, generator[$ctx]),
+    delay: cloneExpr(generator.delay, generator[$ctx]),
+    gain: cloneExpr(generator.gain, generator[$ctx]),
+    invert: generator.invert,
+    model: generator.model,
+    enabled: generator.enabled,
+  };
 }

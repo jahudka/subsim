@@ -20,4 +20,12 @@
   @media (min-width: 540px) {
     max-width: 360px;
   }
+
+  table {
+    border-collapse: collapse;
+
+    td, th { padding: 2px 5px; text-align: left; vertical-align: top; }
+    thead { td, th { border-bottom: 1px solid #aaaa; } }
+    td:not(:first-child), th:not(:first-child) { border-left: 1px solid #aaaa; }
+  }
 }

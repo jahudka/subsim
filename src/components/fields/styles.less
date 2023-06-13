@@ -9,7 +9,7 @@
     width: 5em;
   }
 
-  input, select, textarea {
+  input, select, textarea, .field-input {
     display: block;
     flex: 1 1 auto;
     width: auto;
@@ -109,6 +109,20 @@
 
     &.field-expression-complex {
       border-bottom-color: #44f;
+    }
+  }
+
+  &.field-static {
+    border-bottom-color: transparent;
+
+    .field-input {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .field-input code {
+      font: 12px/1.5 'Source Code Pro', monospace;
     }
   }
 

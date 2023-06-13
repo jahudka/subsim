@@ -1,5 +1,6 @@
+import { Context } from '../expressions';
 import type { Expression } from '../expressions';
-import { $expr, $vars } from '../utils';
+import { $expr, $vars, $sources, $ctx } from '../utils';
 
 export type ExpressionProperty = {
   source: string;
@@ -28,6 +29,7 @@ export type SourceModel = {
 
 export type Source = {
   id: string;
+  kind: 'source';
   x: ExpressionProperty;
   y: ExpressionProperty;
   angle: ExpressionProperty;
@@ -38,6 +40,14 @@ export type Source = {
   invert: boolean;
   model: string;
   enabled: boolean;
+};
+
+export type Generator = Omit<Source, 'kind'> & {
+  kind: 'generator';
+  n: ExpressionProperty;
+  mode: 'negative' | 'center' | 'positive';
+  [$ctx]?: Context;
+  [$sources]?: Source[];
 };
 
 export type Rect = {
@@ -69,6 +79,7 @@ export type Guide = Rect | Line;
 export type Variable = {
   min: number;
   max: number;
+  step: number;
   value: number;
 };
 
@@ -76,8 +87,12 @@ export type LocalVariable = Variable & {
   quick: boolean;
 };
 
+export type LocalComputedVariable = ExpressionProperty & {
+  quick: boolean;
+};
+
 export type VariableMap = Record<string, Variable>;
-export type LocalVariableMap = Record<string, LocalVariable>;
+export type LocalVariableMap = Record<string, LocalVariable | LocalComputedVariable>;
 
 export type ProjectMeta = {
   id: string;
@@ -89,7 +104,7 @@ export type ProjectMeta = {
 
 export type ProjectData = {
   simulation: SimulationOptions;
-  sources: Source[];
+  sources: (Source | Generator)[];
   guides: Guide[];
   variables: LocalVariableMap;
   globals: VariableMap;
