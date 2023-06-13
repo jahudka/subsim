@@ -2,4 +2,5 @@
 - Reference
   - [Parameters and options](params.md)
   - [Expressions](expressions.md)
+  - [Generators](generators.md)
 - [GitHub](https://github.com/jahudka/subsim)

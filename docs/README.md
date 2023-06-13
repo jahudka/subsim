@@ -34,14 +34,16 @@ either as an image, or as a JSON data file which you can share with others who
 can then load it back into the app. Exported data files can be imported using
 the "Import" button in the project list.
 
-### Building blocks
+## Building blocks
 
-#### Sources
+### Sources
 
 The most important part of the simulator are the _sources_ - these represent
-individual speakers as idealised point sources.
+individual speakers as idealised point sources. Sources can be added
+individually, but if you're feeling fancy, you can use _generators_, which can
+be used to define multiple sources in one go.
 
-#### Guides
+### Guides
 
 Guides are visual helpers you can use to help you visualise the space in which
 you're working - you can e.g. add a stage or an FOH and similar things.
@@ -50,7 +52,7 @@ configured to produce mirror images of the sources, which allows you to simulate
 the effects of first reflections. See the [parameter reference](params.md) for
 more info.
 
-#### Expressions
+### Expressions
 
 All numeric parameters of both _sources_ and _guides_ can be represented using
 an _expression_, rather than just a number. Expressions can contain _variables_,
@@ -66,3 +68,23 @@ parameters which use an expression will have a blue underline, and you can hover
 over them to show a tooltip with the source expression. This will switch while
 you're editing such a parameter: the parameter field will then contain the
 expression, and the tooltip will show the computed value.
+
+### Variables
+
+You can define variables for use in expressions. Variables can either be simple
+values you can adjust manually, or they can be defined using an expression; this
+comes in rather handy when you have a number of easily derived values which
+repeat often in expressions in your project.
+
+Subsim differentiates between several layers, or _scopes_, of variables:
+_global_, _user_, and _generator_. Any user-defined variables belong to the
+_user_ scope (surprising no-one). The variable `$c`, which represents the speed
+of sound, is defined in the _global_ scope. When using a [generator](generators.md),
+its `i` variable is defined in the _generator_ scope. This is important because
+variables in a lower (more local) scope override variables defined in a higher
+(less local) scope: a variable in the _user_ scope will override any variable of
+the same name in the _global_ scope, and a variable in the _generator_ scope
+will override any variable defined in either the _user_ or the _global_ scope.
+So you can for example define your own `$c` and derive it from e.g. the room
+temperature, which you can define as another variable, and then adjust that to
+see what effect will changing the temperature have on the sound.
