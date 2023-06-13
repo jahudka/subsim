@@ -21,10 +21,10 @@ export const Sources: FC = () => {
         {sources.map((src) => <SourceUi key={src.id} source={src} />)}
       </div>
       <div className="row src-add">
-        <button className="ml-auto mr-2" onClick={() => dispatch($.src.add('source'))}>
+        <button className="ml-auto mr-2" onClick={() => dispatch($.src.add('source'))} data-tooltip="sources.addSrc">
           <FaPlus /> add source
         </button>
-        <button className="ml-2 mr-auto" onClick={() => dispatch($.src.add('generator'))}>
+        <button className="ml-2 mr-auto" onClick={() => dispatch($.src.add('generator'))} data-tooltip="sources.addGen">
           <FaPlus /> add generator
         </button>
       </div>

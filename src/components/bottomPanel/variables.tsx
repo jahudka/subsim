@@ -136,13 +136,11 @@ const AddVariableUi: FC = () => {
   return (
     <div className="row var-add">
       <StringField className="ml-auto mr-2" value={name} onChange={setName} validate={validateName} placeholder="variable name..." data-tooltip="vars.name" />
-      <button onClick={add} className="mx-2">
-        <FaPlus />
-        add variable
+      <button onClick={add} className="mx-2" data-tooltip="vars.addVar">
+        <FaPlus /> add variable
       </button>
-      <button onClick={addComputed} className="ml-2 mr-auto">
-        <FaPlus />
-        add computed value
+      <button onClick={addComputed} className="ml-2 mr-auto" data-tooltip="vars.addComp">
+        <FaPlus /> add computed value
       </button>
     </div>
   );
