@@ -14,11 +14,12 @@ import './sources.less';
 export const Sources: FC = () => {
   const sources = useSources();
   const dispatch = useDispatch();
+  const showGeneratorProps = sources.some((src) => src.kind === 'generator');
 
   return (
     <div id="sources">
       <div className="lg-table">
-        {sources.map((src) => <SourceUi key={src.id} source={src} />)}
+        {sources.map((src) => <SourceUi key={src.id} source={src} showGeneratorProps={showGeneratorProps} />)}
       </div>
       <div className="row src-add">
         <button className="ml-auto mr-2" onClick={() => dispatch($.src.add('source'))} data-tooltip="sources.addSrc">
@@ -37,14 +38,19 @@ const models = [
   'cardioid',
 ];
 
-const SourceUi: FC<{ source: Source | Generator }> = ({ source }) => {
+type SourceUiProps = {
+  source: Source | Generator;
+  showGeneratorProps?: boolean;
+};
+
+const SourceUi: FC<SourceUiProps> = ({ source, showGeneratorProps }) => {
   if (source.kind === 'source') {
-    return <SourceRow {...source} />;
+    return <SourceRow source={source} showGeneratorProps={showGeneratorProps} />;
   }
 
   return (
     <>
-      <SourceRow {...source} />
+      <SourceRow source={source} showGeneratorProps={showGeneratorProps} />
       {(source[$sources] ?? []).map((src, i) => (
         <GeneratedUi key={i} {...src} i={getI(source, i)} />
       ))}
@@ -60,7 +66,7 @@ function getI(gen: Generator, idx: number): number {
   }
 }
 
-const SourceRow: FC<Source | Generator> = (source) => {
+const SourceRow: FC<SourceUiProps> = ({ source, showGeneratorProps }) => {
   const dispatch = useDispatch();
 
   return (
@@ -68,16 +74,20 @@ const SourceRow: FC<Source | Generator> = (source) => {
       <div className="src-en">
         <BooleanField value={source.enabled} onChange={(en) => dispatch($.src.set(source.id, 'enabled', en))} data-tooltip="sources.en" />
       </div>
-      <div className="src-n">
-        {source.kind === 'generator' && (
-          <ExpressionField state={source.n} onChange={(n) => dispatch($.src.set(source.id, 'n', n))} intro="n =" data-tooltip="sources.n" />
-        )}
-      </div>
-      <div className="src-mode">
-        {source.kind === 'generator' && (
-          <ListField value={source.mode} onChange={(mode) => dispatch($.src.set(source.id, 'mode', mode))} options={getGeneratorRanges(source.n.value)} intro="i =" data-tooltip="sources.mode" />
-        )}
-      </div>
+      {showGeneratorProps && (
+        <>
+          <div className="src-n">
+            {source.kind === 'generator' && (
+              <ExpressionField state={source.n} onChange={(n) => dispatch($.src.set(source.id, 'n', n))} intro="n =" data-tooltip="sources.n" />
+            )}
+          </div>
+          <div className="src-mode">
+            {source.kind === 'generator' && (
+              <ListField value={source.mode} onChange={(mode) => dispatch($.src.set(source.id, 'mode', mode))} options={getGeneratorRanges(source.n.value)} intro="i =" data-tooltip="sources.mode" />
+            )}
+          </div>
+        </>
+      )}
       <CommonUi {...source} values={source.kind !== 'generator'} />
     </div>
   );

@@ -55,4 +55,16 @@ relative time differences is currently fixed at 100ms.
 
 ## Main panel
 
-(to be continued)
+The default view of the main panel is the so-called "quick-access" tool; in
+this view, the panel includes a slider for the simulation frequency, and can be
+configured to include sliders and / or readouts for user-defined variables.
+
+If you expand it, you get access to four tabs:
+ - The _sources_ tab is used to create and configure audio sources and / or
+   generators.
+ - The _guides_ tab allows you to create and configure visual guides.
+ - The _variables_ tab contains variable definitions.
+ - The _options_ tab allows you to adjust global simulation options.
+
+If you enable interactive tooltips in the Help menu, you can hover over any
+field in any tab to get a tooltip explaining what the field does.
