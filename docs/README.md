@@ -88,3 +88,11 @@ will override any variable defined in either the _user_ or the _global_ scope.
 So you can for example define your own `$c` and derive it from e.g. the room
 temperature, which you can define as another variable, and then adjust that to
 see what effect will changing the temperature have on the sound.
+
+## Further reading
+
+You can read more about the Subsim user interface in the [User interface](interface.md)
+section. There is also a complete [parameter and option](params.md) reference
+with detailed descriptions of what each option and parameter does. When you're
+ready to make your models parametric, you can check out the
+[expressions reference](expressions.md) and [generators](generators.md).

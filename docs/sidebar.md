@@ -1,4 +1,5 @@
 - [Intro](/ "Intro to Subsim")
+- [User interface](interface.md)
 - Reference
   - [Parameters and options](params.md)
   - [Expressions](expressions.md)
