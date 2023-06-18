@@ -2,9 +2,15 @@
 
 ## Basic info
 
- - Supported operators: `+`, `-`, `*`, `/` and `^` (for exponentiation).
-   Operator precedence follows standard mathematical conventions.
- - Parentheses are supported.
+ - Supported operators: `+`, `-`, `*`, `/`, `%` (modulo) and `^` (for
+   exponentiation). Operator precedence follows standard mathematical
+   conventions; the `%` (modulo) operator has the same priority as `*` and `/`.
+ - Also supports comparison operators `>`, `<`, `>=`, `<=`, `==`, and `!=`.
+   These operators have the highest priority - higher than all of the above
+   mathematical operators. They resolve to `1` if the comparison is true and
+   `0` otherwise.
+ - Parentheses are supported, allowing you to override the default operator
+   precedence.
  - Undefined variables are resolved to `0`.
  - Invalid expressions (e.g. due to syntax errors) resolve to `0`.
  - Calls to nonexistent functions make the entire expression fail, which makes
@@ -36,3 +42,4 @@
 | `round(value)`<br/>`floor(value)`<br/>`ceil(value)`   | Standard rounding functions.                                                                                                                                  |
 | `abs(value)`                                          | Returns the absolute value of the specified number.                                                                                                           |
 | `sign(value)`                                         | Returns `-1` if the value is less than zero, `1` if the value is greater than zero, and `0` if the value is zero.                                             |
+| `if(condition[[, then], else])`                       | Returns `then` if `condition` is non-zero, `else` otherwise; `then` defaults to `1`, `else` defaults to `0`.                                                  |

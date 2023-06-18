@@ -65,7 +65,7 @@ export class Parser {
       if (op) {
         val = this.parseNode(stream);
         op = null;
-      } else if (token = stream.nextToken('+', '-', '*', '/', '^')) {
+      } else if (token = stream.nextToken(T_OPERATOR)) {
         val = token[1];
         op = token[1];
       }

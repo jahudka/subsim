@@ -23,6 +23,6 @@ export class GlobalContext extends Context {
     this.functions.set('sqrt', (value: number) => Math.sqrt(value));
     this.functions.set('deg', deg);
     this.functions.set('rad', rad);
-    this.functions.set('if', (cond: number, thenVal: number, elseVal: number = 0) => cond ? thenVal : elseVal);
+    this.functions.set('if', (cond: number, thenVal: number = 1, elseVal: number = 0) => cond ? thenVal : elseVal);
   }
 }
